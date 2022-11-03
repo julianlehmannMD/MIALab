@@ -89,7 +89,7 @@ def main(result_dir: str, data_atlas_dir: str, data_train_dir: str, data_test_di
     importances = forest.feature_importances_
     std = np.std([tree.feature_importances_ for tree in forest.estimators_], axis=0)
 
-    forest_importances = pd.Series(importances, index=feature_names)
+    forest_importances = pd.Series(importances) #add feature names here!
 
     fig, ax = plt.subplots()
     forest_importances.plot.bar(yerr=std, ax=ax)
