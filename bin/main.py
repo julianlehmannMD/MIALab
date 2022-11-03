@@ -98,7 +98,7 @@ def main(result_dir: str, data_atlas_dir: str, data_train_dir: str, data_test_di
     ax.set_ylabel("Mean decrease in impurity")
     fig.tight_layout()
 
-    plt.savefig(fig)
+    plt.savefig('feature_importance')
 
     # create a result directory with timestamp
     t = datetime.datetime.now().strftime('%Y-%m-%d-%H-%M-%S')
