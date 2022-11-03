@@ -15,6 +15,8 @@ import sklearn.ensemble as sk_ensemble
 import numpy as np
 import pymia.data.conversion as conversion
 import pymia.data.loading as load
+import pandas as pd
+import matplotlib.pyplot as plt
 
 sys.path.insert(0, os.path.join(os.path.dirname(sys.argv[0]), '..'))  # append the MIALab root directory to Python path
 # fixes the ModuleNotFoundError when executing main.py in the console after code changes (e.g. git pull)
@@ -83,6 +85,19 @@ def main(result_dir: str, data_atlas_dir: str, data_train_dir: str, data_test_di
     start_time = timeit.default_timer()
     forest.fit(data_train, labels_train)
     print(' Time elapsed:', timeit.default_timer() - start_time, 's')
+
+    importances = forest.feature_importances_
+    std = np.std([tree.feature_importances_ for tree in forest.estimators_], axis=0)
+
+    forest_importances = pd.Series(importances, index=feature_names)
+
+    fig, ax = plt.subplots()
+    forest_importances.plot.bar(yerr=std, ax=ax)
+    ax.set_title("Feature importances using MDI")
+    ax.set_ylabel("Mean decrease in impurity")
+    fig.tight_layout()
+
+    plt.savefig(fig)
 
     # create a result directory with timestamp
     t = datetime.datetime.now().strftime('%Y-%m-%d-%H-%M-%S')
