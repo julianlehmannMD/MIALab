@@ -14,6 +14,7 @@ def main():
     #pass  # pass is just a placeholder if there is no other code
     results = pd.read_csv('mia-result/results.csv', sep=';')
     test = results.boxplot(by='LABEL', column=['DICE'], grid=False)
+    print(test)
     test.plot()
     plt.show()
 

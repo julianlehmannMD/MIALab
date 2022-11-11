@@ -67,9 +67,9 @@ def main(result_dir: str, data_atlas_dir: str, data_train_dir: str, data_test_di
     pre_process_params = {'skullstrip_pre': True,
                           'normalization_pre': True,
                           'registration_pre': True,
-                          'coordinates_feature': True,
+                          'coordinates_feature': False,
                           'intensity_feature': True,
-                          'gradient_intensity_feature': True,
+                          'gradient_intensity_feature': False,
                           'our_new_feature': False}
 
     # load images for training and pre-process
@@ -95,7 +95,7 @@ def main(result_dir: str, data_atlas_dir: str, data_train_dir: str, data_test_di
 
     feature_names = ["Atlas coordinates 1", "Atlas coordinates 2", "Atlas coordinates 3", "T1 intensities",
                      "T2 intensities", "T1 gradient", "T2 gradient"]
-    forest_importances = pd.Series(importances, index=feature_names)  # add feature names here!
+    forest_importances = pd.Series(importances)  # add feature names here!
 
     fig, ax = plt.subplots()
     forest_importances.plot.bar(yerr=std, ax=ax)
