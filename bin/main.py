@@ -69,7 +69,8 @@ def main(result_dir: str, data_atlas_dir: str, data_train_dir: str, data_test_di
                           'registration_pre': True,
                           'coordinates_feature': True,
                           'intensity_feature': True,
-                          'gradient_intensity_feature': True}
+                          'gradient_intensity_feature': True,
+                          'our_new_feature': False}
 
     # load images for training and pre-process
     images = putil.pre_process_batch(crawler.data, pre_process_params, multi_process=False)
@@ -78,7 +79,6 @@ def main(result_dir: str, data_atlas_dir: str, data_train_dir: str, data_test_di
     data_train = np.concatenate([img.feature_matrix[0] for img in images])
     labels_train = np.concatenate([img.feature_matrix[1] for img in images]).squeeze()
 
-    warnings.warn('Random forest parameters not properly set.')
     forest = sk_ensemble.RandomForestClassifier(max_features=images[0].feature_matrix[0].shape[1],
                                                 n_estimators=10,
                                                 max_depth=10)
@@ -87,10 +87,15 @@ def main(result_dir: str, data_atlas_dir: str, data_train_dir: str, data_test_di
     forest.fit(data_train, labels_train)
     print(' Time elapsed:', timeit.default_timer() - start_time, 's')
 
+    # -------------------- Feature importance ------------------------ #
+    # Gini Importance or Mean Decrease in Impurity (MDI) calculates each feature importance as the sum over the number
+    # of splits (across all tress) that include the feature, proportionally to the number of samples it splits
     importances = forest.feature_importances_
     std = np.std([tree.feature_importances_ for tree in forest.estimators_], axis=0)
 
-    forest_importances = pd.Series(importances)  # add feature names here!
+    feature_names = ["Atlas coordinates 1", "Atlas coordinates 2", "Atlas coordinates 3", "T1 intensities",
+                     "T2 intensities", "T1 gradient", "T2 gradient"]
+    forest_importances = pd.Series(importances, index=feature_names)  # add feature names here!
 
     fig, ax = plt.subplots()
     forest_importances.plot.bar(yerr=std, ax=ax)
@@ -99,6 +104,8 @@ def main(result_dir: str, data_atlas_dir: str, data_train_dir: str, data_test_di
     fig.tight_layout()
 
     plt.savefig('feature_importance')
+    print("feature figure saved")
+    # ---------------------------------------------------------------------------- #
 
     # create a result directory with timestamp
     t = datetime.datetime.now().strftime('%Y-%m-%d-%H-%M-%S')
