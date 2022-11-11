@@ -78,14 +78,14 @@ class FeatureExtractor:
 
         if self.intensity_feature:
             self.img.feature_images[FeatureImageTypes.T1w_INTENSITY] = self.img.images[structure.BrainImageTypes.T1w]
-            self.img.feature_images[FeatureImageTypes.T2w_INTENSITY] = self.img.images[structure.BrainImageTypes.T2w]
+            #self.img.feature_images[FeatureImageTypes.T2w_INTENSITY] = self.img.images[structure.BrainImageTypes.T2w]
 
         if self.gradient_intensity_feature:
             # compute gradient magnitude images
             self.img.feature_images[FeatureImageTypes.T1w_GRADIENT_INTENSITY] = \
                 sitk.GradientMagnitude(self.img.images[structure.BrainImageTypes.T1w])
-            #self.img.feature_images[FeatureImageTypes.T2w_GRADIENT_INTENSITY] = \
-             #   sitk.GradientMagnitude(self.img.images[structure.BrainImageTypes.T2w])
+            self.img.feature_images[FeatureImageTypes.T2w_GRADIENT_INTENSITY] = \
+                sitk.GradientMagnitude(self.img.images[structure.BrainImageTypes.T2w])
 
         if self.our_new_feature:
             # Put our new features here baby!!!
