@@ -12,7 +12,7 @@ import pymia.evaluation.metric as metric
 import SimpleITK as sitk
 
 import mialab.data.structure as structure
-import mialab.filtering.feature_extraction as fltr_feat
+import mialab.filtering.feature_extraction_own as fltr_feat
 import mialab.filtering.postprocessing as fltr_postp
 import mialab.filtering.preprocessing as fltr_prep
 import mialab.utilities.multi_processor as mproc
@@ -52,7 +52,7 @@ class FeatureImageTypes(enum.Enum):
 class FeatureExtractor:
     """Represents a feature extractor."""
 
-    def __init__(self, img: structure.BrainImage, **kwargs):
+    def __init__(self, img: structure.BrainImage,own_filter_param_='mean', **kwargs):
         """Initializes a new instance of the FeatureExtractor class.
 
         Args:
@@ -65,6 +65,7 @@ class FeatureExtractor:
         self.gradient_intensity_feature = kwargs.get('gradient_intensity_feature', False)
         self.our_new_feature = kwargs.get('our_new_feature', False)
         self.neighborhood_feature = kwargs.get('neighborhood_feature', False)
+        self.own_filter_param=own_filter_param_
 
     def execute(self) -> structure.BrainImage:
         """Extracts features from an image.
@@ -92,11 +93,13 @@ class FeatureExtractor:
 
         if self.neighborhood_feature:
             # Put our new features here baby!!!
-            neighborhood_feature = fltr_feat.NeighborhoodFeatureExtractor()
+            neighborhood_feature = fltr_feat.NeighborhoodFeatureExtractor(usedFilters_=self.own_filter_param)
             self.img.feature_images[FeatureImageTypes.T1w_NEIGHBORHOOD] = \
                 neighborhood_feature.execute(self.img.images[structure.BrainImageTypes.T1w])
+            """
             self.img.feature_images[FeatureImageTypes.T2w_NEIGHBORHOOD] = \
                 neighborhood_feature.execute(self.img.images[structure.BrainImageTypes.T2w])
+            """
 
         self._generate_feature_matrix()
 
@@ -173,7 +176,7 @@ class FeatureExtractor:
         return image.reshape((no_voxels, number_of_components))
 
 
-def pre_process(id_: str, paths: dict, **kwargs) -> structure.BrainImage:
+def pre_process(id_: str,paths: dict, own_filter_param='mean', **kwargs) -> structure.BrainImage:
     """Loads and processes an image.
 
     The processing includes:
@@ -259,7 +262,7 @@ def pre_process(id_: str, paths: dict, **kwargs) -> structure.BrainImage:
     img.image_properties = conversion.ImageProperties(img.images[structure.BrainImageTypes.T1w])
 
     # extract the features
-    feature_extractor = FeatureExtractor(img, **kwargs)
+    feature_extractor = FeatureExtractor(img, own_filter_param,**kwargs)
     img = feature_extractor.execute()
 
     img.feature_images = {}  # we free up memory because we only need the img.feature_matrix
@@ -321,7 +324,7 @@ def init_evaluator() -> eval_.Evaluator:
 
 
 def pre_process_batch(data_batch: t.Dict[structure.BrainImageTypes, structure.BrainImage],
-                      pre_process_params: dict = None, multi_process: bool = True) -> t.List[structure.BrainImage]:
+                      pre_process_params: dict = None, multi_process: bool = True, own_filter_param_ = 'mean') -> t.List[structure.BrainImage]:
     """Loads and pre-processes a batch of images.
 
     The pre-processing includes:
@@ -345,7 +348,7 @@ def pre_process_batch(data_batch: t.Dict[structure.BrainImageTypes, structure.Br
     if multi_process:
         images = mproc.MultiProcessor.run(pre_process, params_list, pre_process_params, mproc.PreProcessingPickleHelper)
     else:
-        images = [pre_process(id_, path, **pre_process_params) for id_, path in params_list]
+        images = [pre_process(id_, path,own_filter_param_, **pre_process_params) for id_, path in params_list]
     return images
 
 

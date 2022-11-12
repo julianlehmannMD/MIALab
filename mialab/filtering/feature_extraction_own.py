@@ -66,7 +66,7 @@ class AtlasCoordinates(fltr.Filter):
             .format(self=self)
 
 
-def first_order_texture_features_function(values):
+def first_order_texture_features_function(values, usedFilters='mean'):
     """Calculates first-order texture features.
 
     Args:
@@ -101,7 +101,15 @@ def first_order_texture_features_function(values):
     max_ = np.max(values)
     num_values = len(values)
     p = values / (np.sum(values) + eps)
-    return np.array([mean,
+    #print("Uses my own feature extraction file")
+    if usedFilters=='mean':
+        #print('calculated the mean')
+        return np.array([mean])
+    elif usedFilters=='variance':
+        #print('calculated the variance')
+        return np.array(np.var(values))
+    elif usedFilters=="test":
+        return np.array([mean,
                      np.var(values),  # variance
                      std,
                      np.sqrt(num_values * (num_values - 1)) / (num_values - 2) * np.sum((values - mean) ** 3) /
@@ -119,17 +127,22 @@ def first_order_texture_features_function(values):
                      np.percentile(values, 75),
                      np.percentile(values, 90)
                      ])
+    else:
+        print('There is no such filter implemented')
+        return 1
+
 
 
 class NeighborhoodFeatureExtractor(fltr.Filter):
     """Represents a feature extractor filter, which works on a neighborhood."""
 
-    def __init__(self, kernel=(3, 3, 3), function_=first_order_texture_features_function):
+    def __init__(self, kernel=(3, 3, 3), function_=first_order_texture_features_function, usedFilters_='mean'):
         """Initializes a new instance of the NeighborhoodFeatureExtractor class."""
         super().__init__()
         self.neighborhood_radius = 3
         self.kernel = kernel
         self.function = function_
+        self.usedFilter=usedFilters_
 
     def execute(self, image: sitk.Image, params: fltr.FilterParams = None) -> sitk.Image:
         """Executes a neighborhood feature extractor on an image.
@@ -151,7 +164,7 @@ class NeighborhoodFeatureExtractor(fltr.Filter):
             raise ValueError('image needs to be 3-D')
 
         # test the function and get the output dimension for later reshaping
-        function_output = self.function(np.array([1, 2, 3]))
+        function_output = self.function(np.array([1, 2, 3]),usedFilters="test")
         if np.isscalar(function_output):
             img_out = sitk.Image(image.GetSize(), sitk.sitkFloat32)
         elif not isinstance(function_output, np.ndarray):
@@ -173,11 +186,12 @@ class NeighborhoodFeatureExtractor(fltr.Filter):
         pad = ((0, z_offset), (0, y_offset), (0, x_offset))
         img_arr_padded = np.pad(img_arr, pad, 'symmetric')
 
+        print(x,y,z)
+
         for xx in range(x):
             for yy in range(y):
                 for zz in range(z):
-
-                    val = self.function(img_arr_padded[zz:zz + z_offset, yy:yy + y_offset, xx:xx + x_offset])
+                    val = self.function(img_arr_padded[zz:zz + z_offset, yy:yy + y_offset, xx:xx + x_offset], self.usedFilter)
                     img_out_arr[zz, yy, xx] = val
 
         img_out = sitk.GetImageFromArray(img_out_arr)
