@@ -67,9 +67,10 @@ def main(result_dir: str, data_atlas_dir: str, data_train_dir: str, data_test_di
     pre_process_params = {'skullstrip_pre': True,
                           'normalization_pre': True,
                           'registration_pre': True,
-                          'coordinates_feature': False,
+                          'coordinates_feature': True,
                           'intensity_feature': True,
-                          'gradient_intensity_feature': False,
+                          'gradient_intensity_feature': True,
+                          'neighborhood_feature': False,
                           'our_new_feature': False}
 
     # load images for training and pre-process
