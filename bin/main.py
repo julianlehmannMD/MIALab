@@ -107,13 +107,13 @@ def main(result_dir: str, data_atlas_dir: str, data_train_dir: str, data_test_di
     ax.set_ylabel("Mean decrease in impurity")
     fig.tight_layout()
 
-    plt.savefig('feature_importance')
+    plt.savefig('feature_importance'+own_filter_param)
     print("feature figure saved")
     # ---------------------------------------------------------------------------- #
 
     # create a result directory with timestamp
     t = datetime.datetime.now().strftime('%Y-%m-%d-%H-%M-%S')
-    result_dir = os.path.join(result_dir, t)
+    result_dir = os.path.join(result_dir, t, own_filter_param)
     os.makedirs(result_dir, exist_ok=True)
 
     print('-' * 5, 'Testing...')
