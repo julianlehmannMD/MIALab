@@ -1,0 +1,251 @@
+Starts main file with the argument mean
+----- Training...
+mean
+---------- Processing 113922
+Executed the neighourhood feature extractor
+197 233 189
+---------- Processing 100307
+Executed the neighourhood feature extractor
+197 233 189
+---------- Processing 110411
+Executed the neighourhood feature extractor
+197 233 189
+---------- Processing 100408
+Executed the neighourhood feature extractor
+197 233 189
+---------- Processing 101107
+Executed the neighourhood feature extractor
+197 233 189
+---------- Processing 101915
+Executed the neighourhood feature extractor
+197 233 189
+---------- Processing 101309
+Executed the neighourhood feature extractor
+197 233 189
+---------- Processing 108828
+Executed the neighourhood feature extractor
+197 233 189
+---------- Processing 103414
+Executed the neighourhood feature extractor
+197 233 189
+---------- Processing 115320
+Executed the neighourhood feature extractor
+197 233 189
+---------- Processing 103111
+Executed the neighourhood feature extractor
+197 233 189
+---------- Processing 113619
+Executed the neighourhood feature extractor
+197 233 189
+---------- Processing 111312
+Executed the neighourhood feature extractor
+197 233 189
+---------- Processing 106016
+Executed the neighourhood feature extractor
+197 233 189
+---------- Processing 111716
+Executed the neighourhood feature extractor
+197 233 189
+---------- Processing 114419
+Executed the neighourhood feature extractor
+197 233 189
+---------- Processing 116524
+Executed the neighourhood feature extractor
+197 233 189
+---------- Processing 105115
+Executed the neighourhood feature extractor
+197 233 189
+---------- Processing 105014
+Executed the neighourhood feature extractor
+197 233 189
+---------- Processing 103818
+Executed the neighourhood feature extractor
+197 233 189
+ Time elapsed: 14.83564151916653 s
+feature figure saved
+----- Testing...
+---------- Processing 118730
+Executed the neighourhood feature extractor
+197 233 189
+---------- Processing 117122
+Executed the neighourhood feature extractor
+197 233 189
+---------- Processing 120111
+Executed the neighourhood feature extractor
+197 233 189
+---------- Processing 122620
+Executed the neighourhood feature extractor
+197 233 189
+---------- Processing 124422
+Executed the neighourhood feature extractor
+197 233 189
+---------- Processing 118528
+Executed the neighourhood feature extractor
+197 233 189
+---------- Processing 123117
+Executed the neighourhood feature extractor
+197 233 189
+---------- Processing 122317
+Executed the neighourhood feature extractor
+197 233 189
+---------- Processing 123925
+Executed the neighourhood feature extractor
+197 233 189
+---------- Processing 118932
+Executed the neighourhood feature extractor
+197 233 189
+---------- Testing 118730
+ Time elapsed: 9.943547361530364 s
+---------- Testing 117122
+ Time elapsed: 9.912166451103985 s
+---------- Testing 120111
+ Time elapsed: 9.86796323210001 s
+---------- Testing 122620
+ Time elapsed: 9.897284846752882 s
+---------- Testing 124422
+ Time elapsed: 9.904337641783059 s
+---------- Testing 118528
+ Time elapsed: 9.912633234634995 s
+---------- Testing 123117
+ Time elapsed: 9.916573802940547 s
+---------- Testing 122317
+ Time elapsed: 9.95919988118112 s
+---------- Testing 123925
+ Time elapsed: 9.898661850951612 s
+---------- Testing 118932
+ Time elapsed: 9.921904128044844 s
+---------- Post-processing 118730
+---------- Post-processing 117122
+---------- Post-processing 120111
+---------- Post-processing 122620
+---------- Post-processing 124422
+---------- Post-processing 118528
+---------- Post-processing 123117
+---------- Post-processing 122317
+---------- Post-processing 123925
+
+Subject-wise results...
+SUBJECT    LABEL        DICE   HDRFDST
+117122     Amygdala     0.441  89.922 
+117122     GreyMatter   0.706  20.248 
+117122     Hippocampus  0.402  49.204 
+117122     Thalamus     0.708  70.185 
+117122     WhiteMatter  0.816  17.720 
+117122-PP  Amygdala     0.441  89.922 
+117122-PP  GreyMatter   0.706  20.248 
+117122-PP  Hippocampus  0.402  49.204 
+117122-PP  Thalamus     0.708  70.185 
+117122-PP  WhiteMatter  0.816  17.720 
+118528     Amygdala     0.370  24.779 
+118528     GreyMatter   0.703  21.190 
+118528     Hippocampus  0.382  60.967 
+118528     Thalamus     0.679  72.090 
+118528     WhiteMatter  0.822  18.055 
+118528-PP  Amygdala     0.370  24.779 
+118528-PP  GreyMatter   0.703  21.190 
+118528-PP  Hippocampus  0.382  60.967 
+118528-PP  Thalamus     0.679  72.090 
+118528-PP  WhiteMatter  0.822  18.055 
+118730     Amygdala     0.457  30.332 
+118730     GreyMatter   0.712  20.640 
+118730     Hippocampus  0.348  62.233 
+118730     Thalamus     0.703  70.264 
+118730     WhiteMatter  0.808  18.466 
+118730-PP  Amygdala     0.457  30.332 
+118730-PP  GreyMatter   0.712  20.640 
+118730-PP  Hippocampus  0.348  62.233 
+118730-PP  Thalamus     0.703  70.264 
+118730-PP  WhiteMatter  0.808  18.466 
+118932     Amygdala     0.427  37.670 
+118932     GreyMatter   0.716  19.799 
+118932     Hippocampus  0.361  55.982 
+118932     Thalamus     0.702  70.264 
+118932     WhiteMatter  0.830  20.224 
+118932-PP  Amygdala     0.427  37.670 
+118932-PP  GreyMatter   0.716  19.799 
+118932-PP  Hippocampus  0.361  55.982 
+118932-PP  Thalamus     0.702  70.264 
+118932-PP  WhiteMatter  0.830  20.224 
+120111     Amygdala     0.427  91.378 
+120111     GreyMatter   0.699  18.868 
+120111     Hippocampus  0.367  72.698 
+120111     Thalamus     0.671  68.731 
+120111     WhiteMatter  0.847  18.547 
+120111-PP  Amygdala     0.427  91.378 
+120111-PP  GreyMatter   0.699  18.868 
+120111-PP  Hippocampus  0.367  72.698 
+120111-PP  Thalamus     0.671  68.731 
+120111-PP  WhiteMatter  0.847  18.547 
+122317     Amygdala     0.492  94.393 
+122317     GreyMatter   0.718  21.284 
+122317     Hippocampus  0.378  72.367 
+122317     Thalamus     0.721  63.008 
+122317     WhiteMatter  0.831  18.276 
+122317-PP  Amygdala     0.492  94.393 
+122317-PP  GreyMatter   0.718  21.284 
+122317-PP  Hippocampus  0.378  72.367 
+122317-PP  Thalamus     0.721  63.008 
+122317-PP  WhiteMatter  0.831  18.276 
+122620     Amygdala     0.470  26.439 
+122620     GreyMatter   0.718  21.378 
+122620     Hippocampus  0.373  62.426 
+122620     Thalamus     0.721  71.316 
+122620     WhiteMatter  0.803  18.248 
+122620-PP  Amygdala     0.470  26.439 
+122620-PP  GreyMatter   0.718  21.378 
+122620-PP  Hippocampus  0.373  62.426 
+122620-PP  Thalamus     0.721  71.316 
+122620-PP  WhiteMatter  0.803  18.248 
+123117     Amygdala     0.411  80.616 
+123117     GreyMatter   0.703  21.909 
+123117     Hippocampus  0.367  71.176 
+123117     Thalamus     0.689  61.188 
+123117     WhiteMatter  0.842  19.468 
+123117-PP  Amygdala     0.411  80.616 
+123117-PP  GreyMatter   0.703  21.909 
+123117-PP  Hippocampus  0.367  71.176 
+123117-PP  Thalamus     0.689  61.188 
+123117-PP  WhiteMatter  0.842  19.468 
+123925     Amygdala     0.468  86.983 
+123925     GreyMatter   0.700  19.672 
+123925     Hippocampus  0.391  65.184 
+123925     Thalamus     0.734  69.007 
+123925     WhiteMatter  0.826  17.578 
+123925-PP  Amygdala     0.468  86.983 
+123925-PP  GreyMatter   0.700  19.672 
+123925-PP  Hippocampus  0.391  65.184 
+123925-PP  Thalamus     0.734  69.007 
+123925-PP  WhiteMatter  0.826  17.578 
+124422     Amygdala     0.530  23.367 
+124422     GreyMatter   0.695  21.213 
+124422     Hippocampus  0.387  71.035 
+124422     Thalamus     0.758  64.016 
+124422     WhiteMatter  0.778  16.643 
+124422-PP  Amygdala     0.530  23.367 
+124422-PP  GreyMatter   0.695  21.213 
+124422-PP  Hippocampus  0.387  71.035 
+124422-PP  Thalamus     0.758  64.016 
+124422-PP  WhiteMatter  0.778  16.643 
+
+Aggregated statistic results...
+LABEL        METRIC   STATISTIC  VALUE 
+Amygdala     DICE     MEAN       0.449 
+Amygdala     DICE     STD        0.042 
+Amygdala     HDRFDST  MEAN       58.588
+Amygdala     HDRFDST  STD        30.469
+GreyMatter   DICE     MEAN       0.707 
+GreyMatter   DICE     STD        0.008 
+GreyMatter   HDRFDST  MEAN       20.620
+GreyMatter   HDRFDST  STD        0.902 
+Hippocampus  DICE     MEAN       0.376 
+Hippocampus  DICE     STD        0.015 
+Hippocampus  HDRFDST  MEAN       64.327
+Hippocampus  HDRFDST  STD        7.382 
+Thalamus     DICE     MEAN       0.709 
+Thalamus     DICE     STD        0.025 
+Thalamus     HDRFDST  MEAN       68.007
+Thalamus     HDRFDST  STD        3.626 
+WhiteMatter  DICE     MEAN       0.820 
+WhiteMatter  DICE     STD        0.019 
+WhiteMatter  HDRFDST  MEAN       18.323
+WhiteMatter  HDRFDST  STD        0.939 
