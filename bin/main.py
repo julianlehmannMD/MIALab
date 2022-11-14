@@ -90,15 +90,22 @@ def main(result_dir: str, data_atlas_dir: str, data_train_dir: str, data_test_di
     start_time = timeit.default_timer()
     forest.fit(data_train, labels_train)
     print(' Time elapsed:', timeit.default_timer() - start_time, 's')
+    # ---------------------------------------------------------------------------- #
 
-    # -------------------- Feature importance ------------------------ #
+    # create a result directory with timestamp
+    t = datetime.datetime.now().strftime('%Y-%m-%d-%H-%M-%S')
+    result_dir_string=str(t+"_"+own_filter_param)
+    result_dir = os.path.join(result_dir, result_dir_string)
+    os.makedirs(result_dir, exist_ok=True)
+
+        # -------------------- Feature importance ------------------------ #
     # Gini Importance or Mean Decrease in Impurity (MDI) calculates each feature importance as the sum over the number
     # of splits (across all tress) that include the feature, proportionally to the number of samples it splits
     importances = forest.feature_importances_
     std = np.std([tree.feature_importances_ for tree in forest.estimators_], axis=0)
 
     feature_names = ["Atlas coordinates 1", "Atlas coordinates 2", "Atlas coordinates 3", "T1 intensities",
-                     "T2 intensities", "T1 gradient", "T2 gradient"]
+                     "T2 intensities", own_filter_param]
     forest_importances = pd.Series(importances)  # add feature names here!
 
     fig, ax = plt.subplots()
@@ -106,15 +113,13 @@ def main(result_dir: str, data_atlas_dir: str, data_train_dir: str, data_test_di
     ax.set_title("Feature importances using MDI")
     ax.set_ylabel("Mean decrease in impurity")
     fig.tight_layout()
+    figure_name="feature_importance_"+own_filter_param
+    figure_path=os.path.join(result_dir, figure_name)
+    plt.savefig(figure_path)
 
-    plt.savefig('feature_importance'+own_filter_param)
+
     print("feature figure saved")
-    # ---------------------------------------------------------------------------- #
 
-    # create a result directory with timestamp
-    t = datetime.datetime.now().strftime('%Y-%m-%d-%H-%M-%S')
-    result_dir = os.path.join(result_dir, t, own_filter_param)
-    os.makedirs(result_dir, exist_ok=True)
 
     print('-' * 5, 'Testing...')
 
