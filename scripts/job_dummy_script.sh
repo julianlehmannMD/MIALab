@@ -1,6 +1,6 @@
 #!/bin/bash
 # SLURM Settings
-#SBATCH --job-name="MIALab"
+#SBATCH --job-name="MIALab_Feature_Extraction"
 #SBATCH --time=10:00:00
 #SBATCH --mem-per-cpu=128G
 #SBATCH --mail-user=marcel.allenspach@students.unibe.ch
