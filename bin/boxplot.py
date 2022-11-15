@@ -27,7 +27,7 @@ def main():
 
     # Concat data sets for boxplot
     cdf = pd.concat([data1, data2, data3])
-    ax = sns.boxplot(x="LABEL", y="DICE", hue="Features", data=cdf)
+    ax = sns.boxplot(x="LABEL", y="HDRFDST", hue="Features", data=cdf)
     plt.show()
 
 if __name__ == '__main__':
