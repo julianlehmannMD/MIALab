@@ -12,7 +12,7 @@ import pymia.evaluation.metric as metric
 import SimpleITK as sitk
 
 import mialab.data.structure as structure
-import mialab.filtering.feature_extraction_own as fltr_feat
+import mialab.filtering.feature_extraction as fltr_feat
 import mialab.filtering.postprocessing as fltr_postp
 import mialab.filtering.preprocessing as fltr_prep
 import mialab.utilities.multi_processor as mproc
@@ -44,15 +44,15 @@ class FeatureImageTypes(enum.Enum):
     T1w_GRADIENT_INTENSITY = 3
     T2w_INTENSITY = 4
     T2w_GRADIENT_INTENSITY = 5
-    T1w_NEIGHBORHOOD = 6
-    T2w_NEIGHBORHOOD = 7
-    T1w_OUR_NEW_FEATURE = 8
-    T2w_OUR_NEW_FEATURE = 9
+    T1w_SOBEL = 6
+    T2w_SOBEL = 7
+    T1w_LAPLACIAN = 8
+    T2w_LAPLACIAN = 9
 
 class FeatureExtractor:
     """Represents a feature extractor."""
 
-    def __init__(self, img: structure.BrainImage,own_filter_param_='mean', **kwargs):
+    def __init__(self, img: structure.BrainImage, **kwargs):
         """Initializes a new instance of the FeatureExtractor class.
 
         Args:
@@ -61,11 +61,15 @@ class FeatureExtractor:
         self.img = img
         self.training = kwargs.get('training', True)
         self.coordinates_feature = kwargs.get('coordinates_feature', False)
-        self.intensity_feature = kwargs.get('intensity_feature', False)
-        self.gradient_intensity_feature = kwargs.get('gradient_intensity_feature', False)
-        self.our_new_feature = kwargs.get('our_new_feature', False)
-        self.neighborhood_feature = kwargs.get('neighborhood_feature', False)
-        self.own_filter_param=own_filter_param_
+        self.t1w_intensity_feature = kwargs.get('t1w_intensity_feature', False)
+        self.t2w_intensity_feature = kwargs.get('t2w_intensity_feature', False)
+        self.t1w_gradient_intensity_feature = kwargs.get('t1w_gradient_intensity_feature', False)
+        self.t2w_gradient_intensity_feature = kwargs.get('t2w_gradient_intensity_feature', False)
+        self.t1w_sobel_feature = kwargs.get('t1w_sobel_feature', False)
+        self.t2w_sobel_feature = kwargs.get('t2w_sobel_feature', False)
+        self.t1w_laplacian_feature = kwargs.get('t1w_laplacian_feature', False)
+        self.t2w_laplacian_feature = kwargs.get('t2w_laplacian_feature', False)
+
 
     def execute(self) -> structure.BrainImage:
         """Extracts features from an image.
@@ -76,30 +80,52 @@ class FeatureExtractor:
         # todo: add T2w features
 
         if self.coordinates_feature:
+            print("Generates corrdinate feature")
             atlas_coordinates = fltr_feat.AtlasCoordinates()
             self.img.feature_images[FeatureImageTypes.ATLAS_COORD] = \
                 atlas_coordinates.execute(self.img.images[structure.BrainImageTypes.T1w])
 
-        if self.intensity_feature:
+        # Intensity Features
+
+        if self.t1w_intensity_feature:
+            print("Generates T1 Intensity feature")
             self.img.feature_images[FeatureImageTypes.T1w_INTENSITY] = self.img.images[structure.BrainImageTypes.T1w]
+        if self.t2w_intensity_feature:
+            print("Generates T2 Intensity feature")
             self.img.feature_images[FeatureImageTypes.T2w_INTENSITY] = self.img.images[structure.BrainImageTypes.T2w]
 
-        if self.gradient_intensity_feature:
-            # compute gradient magnitude images
+        # Gradient Features
+
+        if self.t1w_gradient_intensity_feature:
+            print("Generates T1 gradient feature")
             self.img.feature_images[FeatureImageTypes.T1w_GRADIENT_INTENSITY] = \
                 sitk.GradientMagnitude(self.img.images[structure.BrainImageTypes.T1w])
+        if self.t1w_gradient_intensity_feature:
+            print("Generates T2 gradient feature")
             self.img.feature_images[FeatureImageTypes.T2w_GRADIENT_INTENSITY] = \
                 sitk.GradientMagnitude(self.img.images[structure.BrainImageTypes.T2w])
 
-        if self.neighborhood_feature:
-            # Put our new features here baby!!!
-            neighborhood_feature = fltr_feat.NeighborhoodFeatureExtractor(usedFilters_=self.own_filter_param)
-            self.img.feature_images[FeatureImageTypes.T1w_NEIGHBORHOOD] = \
-                neighborhood_feature.execute(self.img.images[structure.BrainImageTypes.T1w])
-            """
-            self.img.feature_images[FeatureImageTypes.T2w_NEIGHBORHOOD] = \
-                neighborhood_feature.execute(self.img.images[structure.BrainImageTypes.T2w])
-            """
+        # Sobel Features
+
+        if self.t1w_sobel_feature:
+            print("Generates T1 sobel feature")
+            self.img.feature_images[FeatureImageTypes.T1w_SOBEL] = \
+                sitk.SobelEdgeDetection(self.img.images[structure.BrainImageTypes.T1w])
+        if self.t2w_sobel_feature:
+            print("Generates T2 sobel feature")
+            self.img.feature_images[FeatureImageTypes.T2w_SOBEL] = \
+                sitk.SobelEdgeDetection(self.img.images[structure.BrainImageTypes.T2w])
+
+        # Laplacian Features
+
+        if self.t1w_laplacian_feature:
+            print("Generates T1 laplacian feature")
+            self.img.feature_images[FeatureImageTypes.T2w_LAPLACIAN] = \
+                sitk.Laplacian(self.img.images[structure.BrainImageTypes.T1w])
+        if self.t2w_laplacian_feature:
+            print("Generates T2 laplacian feature")
+            self.img.feature_images[FeatureImageTypes.T2w_LAPLACIAN] = \
+                sitk.Laplacian(self.img.images[structure.BrainImageTypes.T2w])
 
         self._generate_feature_matrix()
 
@@ -176,7 +202,7 @@ class FeatureExtractor:
         return image.reshape((no_voxels, number_of_components))
 
 
-def pre_process(id_: str,paths: dict, own_filter_param='mean', **kwargs) -> structure.BrainImage:
+def pre_process(id_: str,paths: dict, **kwargs) -> structure.BrainImage:
     """Loads and processes an image.
 
     The processing includes:
@@ -262,7 +288,7 @@ def pre_process(id_: str,paths: dict, own_filter_param='mean', **kwargs) -> stru
     img.image_properties = conversion.ImageProperties(img.images[structure.BrainImageTypes.T1w])
 
     # extract the features
-    feature_extractor = FeatureExtractor(img, own_filter_param,**kwargs)
+    feature_extractor = FeatureExtractor(img,**kwargs)
     img = feature_extractor.execute()
 
     img.feature_images = {}  # we free up memory because we only need the img.feature_matrix
@@ -324,7 +350,7 @@ def init_evaluator() -> eval_.Evaluator:
 
 
 def pre_process_batch(data_batch: t.Dict[structure.BrainImageTypes, structure.BrainImage],
-                      pre_process_params: dict = None, multi_process: bool = True, own_filter_param_ = 'mean') -> t.List[structure.BrainImage]:
+                      pre_process_params: dict = None, multi_process: bool = True) -> t.List[structure.BrainImage]:
     """Loads and pre-processes a batch of images.
 
     The pre-processing includes:
@@ -348,7 +374,7 @@ def pre_process_batch(data_batch: t.Dict[structure.BrainImageTypes, structure.Br
     if multi_process:
         images = mproc.MultiProcessor.run(pre_process, params_list, pre_process_params, mproc.PreProcessingPickleHelper)
     else:
-        images = [pre_process(id_, path,own_filter_param_, **pre_process_params) for id_, path in params_list]
+        images = [pre_process(id_, path, **pre_process_params) for id_, path in params_list]
     return images
 
 

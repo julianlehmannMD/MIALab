@@ -36,7 +36,7 @@ LOADING_KEYS = [structure.BrainImageTypes.T1w,
                 structure.BrainImageTypes.RegistrationTransform]  # the list of data we will load
 
 
-def main(result_dir: str, data_atlas_dir: str, data_train_dir: str, data_test_dir: str, use_filter:str):
+def main(result_dir: str, data_atlas_dir: str, data_train_dir: str, data_test_dir: str):
     """Brain tissue segmentation using decision forests.
 
     The main routine executes the medical image analysis pipeline:
@@ -68,16 +68,21 @@ def main(result_dir: str, data_atlas_dir: str, data_train_dir: str, data_test_di
                           'normalization_pre': True,
                           'registration_pre': True,
                           'coordinates_feature': True,
-                          'intensity_feature': True,
-                          'gradient_intensity_feature': False,
-                          'neighborhood_feature': True,
-                          'our_new_feature': False}
+                          't1w_intensity_feature': True,
+                          't2w_intensity_feature': True,
+                          't1w_gradient_intensity_feature': True,
+                          't2w_gradient_intensity_feature': True,
+                          't1w_sobel_feature': True,
+                          't2w_sobel_feature': True,
+                          't1w_laplacian_feature': True,
+                          't2w_laplacian_feature': True,
 
-    own_filter_param = use_filter
-    print(own_filter_param)
+
+
+                          }
 
     # load images for training and pre-process
-    images = putil.pre_process_batch(crawler.data, pre_process_params, multi_process=False, own_filter_param_=own_filter_param)
+    images = putil.pre_process_batch(crawler.data, pre_process_params, multi_process=False)
 
     # generate feature matrix and label vector
     data_train = np.concatenate([img.feature_matrix[0] for img in images])
@@ -94,8 +99,7 @@ def main(result_dir: str, data_atlas_dir: str, data_train_dir: str, data_test_di
 
     # create a result directory with timestamp
     t = datetime.datetime.now().strftime('%Y-%m-%d-%H-%M-%S')
-    result_dir_string=str(t+"_"+own_filter_param)
-    result_dir = os.path.join(result_dir, result_dir_string)
+    result_dir = os.path.join(result_dir,t)
     os.makedirs(result_dir, exist_ok=True)
 
         # -------------------- Feature importance ------------------------ #
@@ -105,7 +109,7 @@ def main(result_dir: str, data_atlas_dir: str, data_train_dir: str, data_test_di
     std = np.std([tree.feature_importances_ for tree in forest.estimators_], axis=0)
 
     feature_names = ["Atlas coordinates 1", "Atlas coordinates 2", "Atlas coordinates 3", "T1 intensities",
-                     "T2 intensities", own_filter_param]
+                     "T2 intensities"]
     forest_importances = pd.Series(importances)  # add feature names here!
 
     fig, ax = plt.subplots()
@@ -113,7 +117,7 @@ def main(result_dir: str, data_atlas_dir: str, data_train_dir: str, data_test_di
     ax.set_title("Feature importances using MDI")
     ax.set_ylabel("Mean decrease in impurity")
     fig.tight_layout()
-    figure_name="feature_importance_"+own_filter_param
+    figure_name="feature_importance"
     figure_path=os.path.join(result_dir, figure_name)
     plt.savefig(figure_path)
 
@@ -134,7 +138,7 @@ def main(result_dir: str, data_atlas_dir: str, data_train_dir: str, data_test_di
 
     # load images for testing and pre-process
     pre_process_params['training'] = False
-    images_test = putil.pre_process_batch(crawler.data, pre_process_params, multi_process=False, own_filter_param_=own_filter_param)
+    images_test = putil.pre_process_batch(crawler.data, pre_process_params, multi_process=False)
 
     images_prediction = []
     images_probabilities = []
@@ -225,12 +229,5 @@ if __name__ == "__main__":
         help='Directory with testing data.'
     )
 
-    parser.add_argument(
-        '--use_filter',
-        type=str,
-        default="mean",
-        help='Additional filter that is used, if the neighbour flag is set'
-    )
-
     args = parser.parse_args()
-    main(args.result_dir, args.data_atlas_dir, args.data_train_dir, args.data_test_dir, args.use_filter)
+    main(args.result_dir, args.data_atlas_dir, args.data_train_dir, args.data_test_dir)
