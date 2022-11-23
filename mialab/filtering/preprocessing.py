@@ -6,21 +6,22 @@ import warnings
 
 import pymia.filtering.filter as pymia_fltr
 import SimpleITK as sitk
+import numpy as np
 
 
-class ImageNormalization(pymia_fltr.IFilter):
+class ImageNormalization(pymia_fltr.Filter):
     """Represents a normalization filter."""
 
     def __init__(self):
         """Initializes a new instance of the ImageNormalization class."""
         super().__init__()
 
-    def execute(self, image: sitk.Image, params: pymia_fltr.IFilterParams = None) -> sitk.Image:
+    def execute(self, image: sitk.Image, params: pymia_fltr.FilterParams = None) -> sitk.Image:
         """Executes a normalization on an image.
 
         Args:
             image (sitk.Image): The image.
-            params (IFilterParams): The parameters (unused).
+            params (FilterParams): The parameters (unused).
 
         Returns:
             sitk.Image: The normalized image.
@@ -29,13 +30,10 @@ class ImageNormalization(pymia_fltr.IFilter):
         img_arr = sitk.GetArrayFromImage(image)
 
         # todo: normalize the image using numpy
-        # warnings.warn('No normalization implemented. Returning unprocessed image.')
+        mean = np.mean(img_arr)
+        std = np.std(img_arr)
 
-        mean = img_arr.mean()
-        std = img_arr.std()
-        img_arr = (img_arr - mean) / std
-
-        img_out = sitk.GetImageFromArray(img_arr)
+        img_out = sitk.GetImageFromArray((img_arr - mean) / std)
         img_out.CopyInformation(image)
 
         return img_out
@@ -50,7 +48,7 @@ class ImageNormalization(pymia_fltr.IFilter):
             .format(self=self)
 
 
-class SkullStrippingParameters(pymia_fltr.IFilterParams):
+class SkullStrippingParameters(pymia_fltr.FilterParams):
     """Skull-stripping parameters."""
 
     def __init__(self, img_mask: sitk.Image):
@@ -62,7 +60,7 @@ class SkullStrippingParameters(pymia_fltr.IFilterParams):
         self.img_mask = img_mask
 
 
-class SkullStripping(pymia_fltr.IFilter):
+class SkullStripping(pymia_fltr.Filter):
     """Represents a skull-stripping filter."""
 
     def __init__(self):
@@ -82,7 +80,6 @@ class SkullStripping(pymia_fltr.IFilter):
         mask = params.img_mask  # the brain mask
 
         # todo: remove the skull from the image by using the brain mask
-        # warnings.warn('No skull-stripping implemented. Returning unprocessed image.')
         image = sitk.Mask(image, mask)
 
         return image
@@ -97,7 +94,7 @@ class SkullStripping(pymia_fltr.IFilter):
             .format(self=self)
 
 
-class ImageRegistrationParameters(pymia_fltr.IFilterParams):
+class ImageRegistrationParameters(pymia_fltr.FilterParams):
     """Image registration parameters."""
 
     def __init__(self, atlas: sitk.Image, transformation: sitk.Transform, is_ground_truth: bool = False):
@@ -113,7 +110,7 @@ class ImageRegistrationParameters(pymia_fltr.IFilterParams):
         self.is_ground_truth = is_ground_truth
 
 
-class ImageRegistration(pymia_fltr.IFilter):
+class ImageRegistration(pymia_fltr.Filter):
     """Represents a registration filter."""
 
     def __init__(self):
@@ -133,11 +130,12 @@ class ImageRegistration(pymia_fltr.IFilter):
 
         # todo: replace this filter by a registration. Registration can be costly, therefore, we provide you the
         # transformation, which you only need to apply to the image!
-        # warnings.warn('No registration implemented. Returning unregistered image')
+        #warnings.warn('No registration implemented. Returning unregistered image')
 
         atlas = params.atlas
         transform = params.transformation
         is_ground_truth = params.is_ground_truth  # the ground truth will be handled slightly different
+
         if is_ground_truth:
             # apply transformation to ground truth and brain mask using nearest neighbor interpolation
             image = sitk.Resample(image, atlas, transform, sitk.sitkNearestNeighbor, 0,
@@ -146,7 +144,6 @@ class ImageRegistration(pymia_fltr.IFilter):
             # apply transformation to T1w and T2w images using linear interpolation
             image = sitk.Resample(image, atlas, transform, sitk.sitkLinear, 0.0,
                                   image.GetPixelIDValue())
-
         # note: if you are interested in registration, and want to test it, have a look at
         # pymia.filtering.registration.MultiModalRegistration. Think about the type of registration, i.e.
         # do you want to register to an atlas or inter-subject? Or just ask us, we can guide you ;-)
