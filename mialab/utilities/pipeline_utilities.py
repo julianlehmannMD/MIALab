@@ -1,6 +1,7 @@
 """This module contains utility classes and functions."""
 import enum
 import os
+import timeit
 import typing as t
 import warnings
 
@@ -16,6 +17,7 @@ import mialab.filtering.feature_extraction as fltr_feat
 import mialab.filtering.postprocessing as fltr_postp
 import mialab.filtering.preprocessing as fltr_prep
 import mialab.utilities.multi_processor as mproc
+
 
 atlas_t1 = sitk.Image()
 atlas_t2 = sitk.Image()
@@ -126,7 +128,6 @@ class FeatureExtractor:
             print("Generates T2 laplacian feature")
             self.img.feature_images[FeatureImageTypes.T2w_LAPLACIAN] = \
                 sitk.Laplacian(self.img.images[structure.BrainImageTypes.T2w])
-
         self._generate_feature_matrix()
 
         return self.img
@@ -149,25 +150,33 @@ class FeatureExtractor:
             # you can exclude background voxels from the training mask generation
             # mask_background = self.img.images[structure.BrainImageTypes.BrainMask]
             # and use background_mask=mask_background in get_mask()
+            t = timeit.default_timer()
+            # to speed up we save the mask of the ground truth so it is done only ones for each run
+            if not os.path.exists('gt_'+self.img.id_+'.npy'):
+                mask = fltr_feat.RandomizedTrainingMaskGenerator.get_mask(
+                    self.img.images[structure.BrainImageTypes.GroundTruth],
+                    [0, 1, 2, 3, 4, 5],
+                    [0.0003, 0.004, 0.003, 0.04, 0.04, 0.02])
 
-            mask = fltr_feat.RandomizedTrainingMaskGenerator.get_mask(
-                self.img.images[structure.BrainImageTypes.GroundTruth],
-                [0, 1, 2, 3, 4, 5],
-                [0.0003, 0.004, 0.003, 0.04, 0.04, 0.02])
 
             # convert the mask to a logical array where value 1 is False and value 0 is True
-            mask = sitk.GetArrayFromImage(mask)
-            mask = np.logical_not(mask)
-
+                mask = sitk.GetArrayFromImage(mask)
+                mask = np.logical_not(mask)
+                with open('gt_'+self.img.id_+'.npy', 'wb') as f:
+                    np.save(f, mask)
+            with open('gt_'+self.img.id_+'.npy', 'rb') as f:
+                mask = np.load(f)
+            print(timeit.default_timer() - t)
+        t = timeit.default_timer()
         # generate features
         data = np.concatenate(
             [self._image_as_numpy_array(image, mask) for id_, image in self.img.feature_images.items()],
             axis=1)
-
         # generate labels (note that we assume to have a ground truth even for testing)
         labels = self._image_as_numpy_array(self.img.images[structure.BrainImageTypes.GroundTruth], mask)
 
         self.img.feature_matrix = (data.astype(np.float32), labels.astype(np.int16))
+        print(timeit.default_timer() - t)
 
     @staticmethod
     def _image_as_numpy_array(image: sitk.Image, mask: np.ndarray = None):
