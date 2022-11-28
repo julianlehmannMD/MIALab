@@ -150,7 +150,7 @@ class FeatureExtractor:
             # you can exclude background voxels from the training mask generation
             # mask_background = self.img.images[structure.BrainImageTypes.BrainMask]
             # and use background_mask=mask_background in get_mask()
-            t = timeit.default_timer()
+
             # to speed up we save the mask of the ground truth so it is done only ones for each run
             if not os.path.exists('gt_'+self.img.id_+'.npy'):
                 mask = fltr_feat.RandomizedTrainingMaskGenerator.get_mask(
@@ -166,8 +166,7 @@ class FeatureExtractor:
                     np.save(f, mask)
             with open('gt_'+self.img.id_+'.npy', 'rb') as f:
                 mask = np.load(f)
-            print(timeit.default_timer() - t)
-        t = timeit.default_timer()
+
         # generate features
         data = np.concatenate(
             [self._image_as_numpy_array(image, mask) for id_, image in self.img.feature_images.items()],
@@ -176,7 +175,7 @@ class FeatureExtractor:
         labels = self._image_as_numpy_array(self.img.images[structure.BrainImageTypes.GroundTruth], mask)
 
         self.img.feature_matrix = (data.astype(np.float32), labels.astype(np.int16))
-        print(timeit.default_timer() - t)
+
 
     @staticmethod
     def _image_as_numpy_array(image: sitk.Image, mask: np.ndarray = None):
