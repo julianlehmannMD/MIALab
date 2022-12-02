@@ -1,2 +1,0 @@
-
-t2w_laplacian_feature: 0.0014651468214173236

@@ -1,3 +1,0 @@
-
-Best param: t1w_gradient_intensity_feature
-{'skullstrip_pre': True, 'normalization_pre': True, 'registration_pre': True, 't1w_intensity_feature': True, 'coordinates_feature': False, 't2w_intensity_feature': False, 't1w_gradient_intensity_feature': False, 't2w_gradient_intensity_feature': False, 't1w_sobel_feature': False, 't2w_sobel_feature': False, 't1w_laplacian_feature': True, 't2w_laplacian_feature': False, 'training': False}
