@@ -100,7 +100,6 @@ def main(result_dir: str, data_atlas_dir: str, data_train_dir: str, data_test_di
             if i_local == i_global:
                 pre_process_params[key] = True
             i_local += 1
-        i_global += 1
 
         print(pre_process_params)
 
@@ -226,29 +225,39 @@ def main(result_dir: str, data_atlas_dir: str, data_train_dir: str, data_test_di
         std_idx = np.asarray(summary_statistic[:] == 'STD')
 
         amygdala_idx = np.asarray(summary_label[:] == 'Amygdala')
-        amygdala_dice_std_times_mean = (1 - np.asarray(
-            summary_value[np.logical_and(amygdala_idx, np.logical_and(dice_idx, mean_idx))])) * np.asarray(
-            summary_value[np.logical_and(amygdala_idx, np.logical_and(dice_idx, std_idx))])
+        mean = np.asarray(summary_value[np.logical_and(amygdala_idx, np.logical_and(dice_idx, mean_idx))])
+        std = np.asarray(summary_value[np.logical_and(amygdala_idx, np.logical_and(dice_idx, std_idx))])
+        if std == 0:
+            std = 1
+        amygdala_dice_std_times_mean = (1 - mean) * std
 
         greyMatter_idx = np.asarray(summary_label[:] == 'GreyMatter')
-        greyMatter_dice_std_times_mean = (1 - np.asarray(
-            summary_value[np.logical_and(greyMatter_idx, np.logical_and(dice_idx, mean_idx))])) * np.asarray(
-            summary_value[np.logical_and(greyMatter_idx, np.logical_and(dice_idx, std_idx))])
+        mean = np.asarray(summary_value[np.logical_and(greyMatter_idx, np.logical_and(dice_idx, mean_idx))])
+        std = np.asarray(summary_value[np.logical_and(greyMatter_idx, np.logical_and(dice_idx, std_idx))])
+        if std == 0:
+            std = 1
+        greyMatter_dice_std_times_mean = (1 - mean) * std
 
         hippocampus_idx = np.asarray(summary_label[:] == 'Hippocampus')
-        hippocampus_dice_std_times_mean = (1 - np.asarray(
-            summary_value[np.logical_and(hippocampus_idx, np.logical_and(dice_idx, mean_idx))])) * np.asarray(
-            summary_value[np.logical_and(hippocampus_idx, np.logical_and(dice_idx, std_idx))])
+        mean = np.asarray(summary_value[np.logical_and(hippocampus_idx, np.logical_and(dice_idx, mean_idx))])
+        std = np.asarray(summary_value[np.logical_and(hippocampus_idx, np.logical_and(dice_idx, std_idx))])
+        if std == 0:
+            std = 1
+        hippocampus_dice_std_times_mean = (1 - mean) * std
 
         thalamus_idx = np.asarray(summary_label[:] == 'Thalamus')
-        thalamus_dice_std_times_mean = (1 - np.asarray(
-            summary_value[np.logical_and(thalamus_idx, np.logical_and(dice_idx, mean_idx))])) * np.asarray(
-            summary_value[np.logical_and(thalamus_idx, np.logical_and(dice_idx, std_idx))])
+        mean = np.asarray(summary_value[np.logical_and(thalamus_idx, np.logical_and(dice_idx, mean_idx))])
+        std = np.asarray(summary_value[np.logical_and(thalamus_idx, np.logical_and(dice_idx, std_idx))])
+        if std == 0:
+            std = 1
+        thalamus_dice_std_times_mean = (1 - mean) * std
 
         whiteMatter_idx = np.asarray(summary_label[:] == 'WhiteMatter')
-        whiteMatter_dice_std_times_mean = (1 - np.asarray(
-            summary_value[np.logical_and(whiteMatter_idx, np.logical_and(dice_idx, mean_idx))])) * np.asarray(
-            summary_value[np.logical_and(whiteMatter_idx, np.logical_and(dice_idx, std_idx))])
+        mean = np.asarray(summary_value[np.logical_and(whiteMatter_idx, np.logical_and(dice_idx, mean_idx))])
+        std = np.asarray(summary_value[np.logical_and(whiteMatter_idx, np.logical_and(dice_idx, std_idx))])
+        if std == 0:
+            std = 1
+        whiteMatter_dice_std_times_mean = (1 - mean) * std
 
         new_robustness = np.mean([whiteMatter_dice_std_times_mean, thalamus_dice_std_times_mean, hippocampus_dice_std_times_mean, greyMatter_dice_std_times_mean, amygdala_dice_std_times_mean])
         if new_robustness == 0:
@@ -267,6 +276,8 @@ def main(result_dir: str, data_atlas_dir: str, data_train_dir: str, data_test_di
                     f.write('\n' + str(key) + ': ' + str(new_robustness))
             i_local += 1
 
+        # iterate features
+        i_global += 1
 
     print(i_global_best)
     print(robustness_best)
