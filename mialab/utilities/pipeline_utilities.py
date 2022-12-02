@@ -89,10 +89,11 @@ class FeatureExtractor:
         feature_dir = os.path.normpath(os.path.join(script_dir, './computed-features'))
         os.makedirs(feature_dir, exist_ok=True)
         feature_name = 'ft_' + self.img.id_+'.pkl'
-        if os.path.exists(os.path.join(script_dir, feature_dir) + '/' + feature_name):
+        if os.path.exists(os.path.join(feature_dir) + '/' + feature_name):
             print('feature file exists')
             print(os.path.join(script_dir, feature_dir))
-            with open(os.path.join(script_dir, feature_dir) + '/' + feature_name, 'rb') as f:
+            print(os.path.join(feature_dir))
+            with open(os.path.join(feature_dir) + '/' + feature_name, 'rb') as f:
                 self.img.feature_images = pickle.load(f)
 
         if self.coordinates_feature:
@@ -154,9 +155,7 @@ class FeatureExtractor:
                 self.img.feature_images[FeatureImageTypes.T2w_LAPLACIAN] = \
                     sitk.Laplacian(self.img.images[structure.BrainImageTypes.T2w])
 
-        print(os.path.join(feature_dir))
-        print(os.path.join(script_dir, feature_dir) + '/' + feature_name)
-        with open(os.path.join(script_dir, feature_dir) + '/' + feature_name, 'wb') as f:
+        with open(os.path.join(feature_dir) + '/' + feature_name, 'wb') as f:
             pickle.dump(self.img.feature_images,f)
 
         self._generate_feature_matrix()
