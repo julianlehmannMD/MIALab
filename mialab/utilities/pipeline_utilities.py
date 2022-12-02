@@ -100,7 +100,7 @@ class FeatureExtractor:
             print("Generates T1 gradient feature")
             self.img.feature_images[FeatureImageTypes.T1w_GRADIENT_INTENSITY] = \
                 sitk.GradientMagnitude(self.img.images[structure.BrainImageTypes.T1w])
-        if self.t1w_gradient_intensity_feature:
+        if self.t2w_gradient_intensity_feature:
             print("Generates T2 gradient feature")
             self.img.feature_images[FeatureImageTypes.T2w_GRADIENT_INTENSITY] = \
                 sitk.GradientMagnitude(self.img.images[structure.BrainImageTypes.T2w])

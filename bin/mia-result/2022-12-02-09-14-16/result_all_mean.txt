@@ -1,0 +1,8 @@
+
+t2w_intensity_feature: 0.009558685374491453
+t1w_gradient_intensity_feature: 0.0008846705531168094
+t2w_gradient_intensity_feature: 0.003146537365392175
+t1w_sobel_feature: 0.00408168677010477
+t2w_sobel_feature: 0.0014868045467952263
+t1w_laplacian_feature: 0.003879600153410269
+t2w_laplacian_feature: 0.0014651468214173236
