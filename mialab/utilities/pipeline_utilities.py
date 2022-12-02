@@ -91,6 +91,8 @@ class FeatureExtractor:
         feature_name = 'ft_' + self.img.id_+'.pkl'
         if os.path.exists(os.path.join(script_dir, feature_dir) + '/' + feature_name):
             with open(os.path.join(script_dir, feature_dir) + '/' + feature_name, 'rb') as f:
+                print(os.path.join(script_dir, feature_dir))
+                print(f)
                 self.img.feature_images = pickle.load(f)
 
         if self.coordinates_feature:
