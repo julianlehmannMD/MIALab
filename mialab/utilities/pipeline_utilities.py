@@ -188,7 +188,7 @@ class FeatureExtractor:
             os.makedirs(gt_dir, exist_ok=True)
             gt_name = 'gt_'+self.img.id_+'.npy'
 
-            if not os.path.exists(os.path.join(script_dir,gt_dir)+'/'+gt_name):
+            if not os.path.exists(os.path.join(gt_dir)+'/'+gt_name):
                 mask = fltr_feat.RandomizedTrainingMaskGenerator.get_mask(
                     self.img.images[structure.BrainImageTypes.GroundTruth],
                     [0, 1, 2, 3, 4, 5],
@@ -198,10 +198,10 @@ class FeatureExtractor:
             # convert the mask to a logical array where value 1 is False and value 0 is True
                 mask = sitk.GetArrayFromImage(mask)
                 mask = np.logical_not(mask)
-                with open(os.path.join(script_dir,gt_dir)+'/'+gt_name, 'wb') as f:
+                with open(os.path.join(gt_dir)+'/'+gt_name, 'wb') as f:
                     np.save(f, mask)
             else:
-                with open(os.path.join(script_dir,gt_dir)+'/'+gt_name, 'rb') as f:
+                with open(os.path.join(gt_dir)+'/'+gt_name, 'rb') as f:
                     mask = np.load(f)
 
         # generate features
