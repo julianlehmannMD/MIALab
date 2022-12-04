@@ -7,7 +7,6 @@ import warnings
 import sys
 import pickle
 
-
 import numpy as np
 import pymia.data.conversion as conversion
 import pymia.filtering.filter as fltr
@@ -20,7 +19,6 @@ import mialab.filtering.feature_extraction as fltr_feat
 import mialab.filtering.postprocessing as fltr_postp
 import mialab.filtering.preprocessing as fltr_prep
 import mialab.utilities.multi_processor as mproc
-
 
 atlas_t1 = sitk.Image()
 atlas_t2 = sitk.Image()
@@ -54,6 +52,7 @@ class FeatureImageTypes(enum.Enum):
     T1w_LAPLACIAN = 8
     T2w_LAPLACIAN = 9
 
+
 class FeatureExtractor:
     """Represents a feature extractor."""
 
@@ -75,7 +74,6 @@ class FeatureExtractor:
         self.t1w_laplacian_feature = kwargs.get('t1w_laplacian_feature', False)
         self.t2w_laplacian_feature = kwargs.get('t2w_laplacian_feature', False)
 
-
     @property
     def execute(self) -> structure.BrainImage:
         """Extracts features from an image.
@@ -85,81 +83,81 @@ class FeatureExtractor:
         """
         # todo: add T2w features
 
-        script_dir = os.path.dirname(sys.argv[0])
-        feature_dir = os.path.normpath(os.path.join(script_dir, './computed-features'))
-        os.makedirs(feature_dir, exist_ok=True)
-        feature_name = 'ft_' + self.img.id_+'.pkl'
-        if os.path.exists(os.path.join(feature_dir) + '/' + feature_name):
-            print('feature file exists')
-            print(os.path.join(script_dir, feature_dir))
-            print(os.path.join(feature_dir))
-            with open(os.path.join(feature_dir) + '/' + feature_name, 'rb') as f:
-                self.img.feature_images = pickle.load(f)
+        if False:
+            script_dir = os.path.dirname(sys.argv[0])
+            feature_dir = os.path.normpath(os.path.join(script_dir, './computed-features'))
+            os.makedirs(feature_dir, exist_ok=True)
+            feature_name = 'ft_' + self.img.id_ + '.pkl'
+            if os.path.exists(os.path.join(feature_dir) + '/' + feature_name):
+                print('feature file exists')
+                print(os.path.join(script_dir, feature_dir))
+                print(os.path.join(feature_dir))
+                with open(os.path.join(feature_dir) + '/' + feature_name, 'rb') as f:
+                    self.img.feature_images = pickle.load(f)
 
         if self.coordinates_feature:
-            if not FeatureImageTypes.ATLAS_COORD in self.img.feature_images:
-                print("Generates corrdinate feature")
-                atlas_coordinates = fltr_feat.AtlasCoordinates()
-                self.img.feature_images[FeatureImageTypes.ATLAS_COORD] = \
-                    atlas_coordinates.execute(self.img.images[structure.BrainImageTypes.T1w])
-
-
+            # if not FeatureImageTypes.ATLAS_COORD in self.img.feature_images:
+            print("Generates corrdinate feature")
+            atlas_coordinates = fltr_feat.AtlasCoordinates()
+            self.img.feature_images[FeatureImageTypes.ATLAS_COORD] = \
+                atlas_coordinates.execute(self.img.images[structure.BrainImageTypes.T1w])
 
         # Intensity Features
 
         if self.t1w_intensity_feature:
-            if not FeatureImageTypes.T1w_INTENSITY in self.img.feature_images:
-                print("Generates T1 Intensity feature")
-                self.img.feature_images[FeatureImageTypes.T1w_INTENSITY] = self.img.images[structure.BrainImageTypes.T1w]
+            # if not FeatureImageTypes.T1w_INTENSITY in self.img.feature_images:
+            print("Generates T1 Intensity feature")
+            self.img.feature_images[FeatureImageTypes.T1w_INTENSITY] = self.img.images[
+                structure.BrainImageTypes.T1w]
         if self.t2w_intensity_feature:
-            if not FeatureImageTypes.T2w_INTENSITY in self.img.feature_images:
-                print("Generates T2 Intensity feature")
-                self.img.feature_images[FeatureImageTypes.T2w_INTENSITY] = self.img.images[structure.BrainImageTypes.T2w]
+            # if not FeatureImageTypes.T2w_INTENSITY in self.img.feature_images:
+            print("Generates T2 Intensity feature")
+            self.img.feature_images[FeatureImageTypes.T2w_INTENSITY] = self.img.images[
+                structure.BrainImageTypes.T2w]
 
         # Gradient Features
 
         if self.t1w_gradient_intensity_feature:
-            if not FeatureImageTypes.T1w_GRADIENT_INTENSITY in self.img.feature_images:
-                print("Generates T1 gradient feature")
-                self.img.feature_images[FeatureImageTypes.T1w_GRADIENT_INTENSITY] = \
-                    sitk.GradientMagnitude(self.img.images[structure.BrainImageTypes.T1w])
+            # if not FeatureImageTypes.T1w_GRADIENT_INTENSITY in self.img.feature_images:
+            print("Generates T1 gradient feature")
+            self.img.feature_images[FeatureImageTypes.T1w_GRADIENT_INTENSITY] = \
+                sitk.GradientMagnitude(self.img.images[structure.BrainImageTypes.T1w])
         if self.t2w_gradient_intensity_feature:
-            if not FeatureImageTypes.T2w_GRADIENT_INTENSITY in self.img.feature_images:
-                print("Generates T2 gradient feature")
-                self.img.feature_images[FeatureImageTypes.T2w_GRADIENT_INTENSITY] = \
-                    sitk.GradientMagnitude(self.img.images[structure.BrainImageTypes.T2w])
+            # if not FeatureImageTypes.T2w_GRADIENT_INTENSITY in self.img.feature_images:
+            print("Generates T2 gradient feature")
+            self.img.feature_images[FeatureImageTypes.T2w_GRADIENT_INTENSITY] = \
+                sitk.GradientMagnitude(self.img.images[structure.BrainImageTypes.T2w])
 
         # Sobel Features
 
         if self.t1w_sobel_feature:
-            if not FeatureImageTypes.T1w_SOBEL in self.img.feature_images:
-                print("Generates T1 sobel feature")
-                self.img.feature_images[FeatureImageTypes.T1w_SOBEL] = \
-                    sitk.SobelEdgeDetection(self.img.images[structure.BrainImageTypes.T1w])
+            #if not FeatureImageTypes.T1w_SOBEL in self.img.feature_images:
+            print("Generates T1 sobel feature")
+            self.img.feature_images[FeatureImageTypes.T1w_SOBEL] = \
+                sitk.SobelEdgeDetection(self.img.images[structure.BrainImageTypes.T1w])
         if self.t2w_sobel_feature:
-            if not FeatureImageTypes.T2w_SOBEL in self.img.feature_images:
-                print("Generates T2 sobel feature")
-                self.img.feature_images[FeatureImageTypes.T2w_SOBEL] = \
-                    sitk.SobelEdgeDetection(self.img.images[structure.BrainImageTypes.T2w])
+            #if not FeatureImageTypes.T2w_SOBEL in self.img.feature_images:
+            print("Generates T2 sobel feature")
+            self.img.feature_images[FeatureImageTypes.T2w_SOBEL] = \
+                sitk.SobelEdgeDetection(self.img.images[structure.BrainImageTypes.T2w])
 
         # Laplacian Features
 
         if self.t1w_laplacian_feature:
-            if not FeatureImageTypes.T1w_LAPLACIAN in self.img.feature_images:
-                print("Generates T1 laplacian feature")
-                self.img.feature_images[FeatureImageTypes.T1w_LAPLACIAN] = \
-                    sitk.Laplacian(self.img.images[structure.BrainImageTypes.T1w])
+            #if not FeatureImageTypes.T1w_LAPLACIAN in self.img.feature_images:
+            print("Generates T1 laplacian feature")
+            self.img.feature_images[FeatureImageTypes.T1w_LAPLACIAN] = \
+                sitk.Laplacian(self.img.images[structure.BrainImageTypes.T1w])
         if self.t2w_laplacian_feature:
-            if not FeatureImageTypes.T2w_LAPLACIAN in self.img.feature_images:
-                print("Generates T2 laplacian feature")
-                self.img.feature_images[FeatureImageTypes.T2w_LAPLACIAN] = \
-                    sitk.Laplacian(self.img.images[structure.BrainImageTypes.T2w])
+            #if not FeatureImageTypes.T2w_LAPLACIAN in self.img.feature_images:
+            print("Generates T2 laplacian feature")
+            self.img.feature_images[FeatureImageTypes.T2w_LAPLACIAN] = \
+                 sitk.Laplacian(self.img.images[structure.BrainImageTypes.T2w])
 
-        with open(os.path.join(feature_dir) + '/' + feature_name, 'wb') as f:
-            pickle.dump(self.img.feature_images,f)
+        #with open(os.path.join(feature_dir) + '/' + feature_name, 'wb') as f:
+        #    pickle.dump(self.img.feature_images, f)
 
         self._generate_feature_matrix()
-
 
         return self.img
 
@@ -186,22 +184,21 @@ class FeatureExtractor:
             script_dir = os.path.dirname(sys.argv[0])
             gt_dir = os.path.normpath(os.path.join(script_dir, './gt-mask'))
             os.makedirs(gt_dir, exist_ok=True)
-            gt_name = 'gt_'+self.img.id_+'.npy'
+            gt_name = 'gt_' + self.img.id_ + '.npy'
 
-            if not os.path.exists(os.path.join(gt_dir)+'/'+gt_name):
+            if not os.path.exists(os.path.join(gt_dir) + '/' + gt_name):
                 mask = fltr_feat.RandomizedTrainingMaskGenerator.get_mask(
                     self.img.images[structure.BrainImageTypes.GroundTruth],
                     [0, 1, 2, 3, 4, 5],
                     [0.0003, 0.004, 0.003, 0.04, 0.04, 0.02])
 
-
-            # convert the mask to a logical array where value 1 is False and value 0 is True
+                # convert the mask to a logical array where value 1 is False and value 0 is True
                 mask = sitk.GetArrayFromImage(mask)
                 mask = np.logical_not(mask)
-                with open(os.path.join(gt_dir)+'/'+gt_name, 'wb') as f:
+                with open(os.path.join(gt_dir) + '/' + gt_name, 'wb') as f:
                     np.save(f, mask)
             else:
-                with open(os.path.join(gt_dir)+'/'+gt_name, 'rb') as f:
+                with open(os.path.join(gt_dir) + '/' + gt_name, 'rb') as f:
                     mask = np.load(f)
 
         # generate features
@@ -212,7 +209,8 @@ class FeatureExtractor:
         labels = self._image_as_numpy_array(self.img.images[structure.BrainImageTypes.GroundTruth], mask)
 
         self.img.feature_matrix = (data.astype(np.float32), labels.astype(np.int16))
-
+        #print('Feature matrix size:')
+        #print(np.size(data))
 
     @staticmethod
     def _image_as_numpy_array(image: sitk.Image, mask: np.ndarray = None):
@@ -247,7 +245,7 @@ class FeatureExtractor:
         return image.reshape((no_voxels, number_of_components))
 
 
-def pre_process(id_: str,paths: dict, **kwargs) -> structure.BrainImage:
+def pre_process(id_: str, paths: dict, **kwargs) -> structure.BrainImage:
     """Loads and processes an image.
 
     The processing includes:
@@ -333,7 +331,7 @@ def pre_process(id_: str,paths: dict, **kwargs) -> structure.BrainImage:
     img.image_properties = conversion.ImageProperties(img.images[structure.BrainImageTypes.T1w])
 
     # extract the features
-    feature_extractor = FeatureExtractor(img,**kwargs)
+    feature_extractor = FeatureExtractor(img, **kwargs)
     img = feature_extractor.execute
 
     img.feature_images = {}  # we free up memory because we only need the img.feature_matrix
@@ -380,7 +378,7 @@ def init_evaluator() -> eval_.Evaluator:
     # initialize metrics
     metrics = [metric.DiceCoefficient()]
     # todo: add hausdorff distance, 95th percentile (see metric.HausdorffDistance)
-    #warnings.warn('Initialized evaluation with the Dice coefficient. Do you know other suitable metrics?')
+    # warnings.warn('Initialized evaluation with the Dice coefficient. Do you know other suitable metrics?')
     metrics.append(metric.HausdorffDistance())
     # define the labels to evaluate
     labels = {1: 'WhiteMatter',
