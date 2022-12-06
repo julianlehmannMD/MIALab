@@ -40,12 +40,15 @@ def main():
     _4 = pd.read_csv('mia-result/results_all/Summary/4.csv', sep=';')
     _5 = pd.read_csv('mia-result/results_all/Summary/5.csv', sep=';')
     _6 = pd.read_csv('mia-result/results_all/Summary/6.csv', sep=';')
+    _7 = pd.read_csv('mia-result/results_all/Summary/7.csv', sep=';')
+    _8 = pd.read_csv('mia-result/results_all/Summary/8.csv', sep=';')
+
 
     # Evaluate Dice and Housedorf
-    results_dict = {1: _1, 2: _2, 3: _3, 4: _4, 5: _5, 6: _6}
-    dict_dice_multiplied_by_std_labels = {'1': {}, '2': {}, '3': {}, '4': {}, '5': {}, '6': {}}
-    dict_dice_mean = {'1': {}, '2': {}, '3': {}, '4': {}, '5': {}, '6': {}}
-    dict_dice_std = {'1': {}, '2': {}, '3': {}, '4': {}, '5': {}, '6': {}}
+    results_dict = {1: _1, 2: _2, 3: _3, 4: _4, 5: _5, 6: _6, 7: _7, 8: _8}
+    dict_dice_multiplied_by_std_labels = {'1': {}, '2': {}, '3': {}, '4': {}, '5': {}, '6': {}, '7': {}, '8': {}}
+    dict_dice_mean = {'1': {}, '2': {}, '3': {}, '4': {}, '5': {}, '6': {}, '7': {}, '8': {}}
+    dict_dice_std = {'1': {}, '2': {}, '3': {}, '4': {}, '5': {}, '6': {}, '7': {}, '8': {}}
 
     for i in results_dict:
         data = results_dict[i]
@@ -115,6 +118,10 @@ def main():
             dict_ = '5'
         elif i == 6:
             dict_ = '6'
+        elif i == 7:
+            dict_ = '7'
+        elif i == 8:
+            dict_ = '8'
         dict_dice_multiplied_by_std_labels[dict_] = {'Amygdala': amygdala_dice_std_times_mean.item(),
                                                      'GreyMatter': greyMatter_dice_std_times_mean.item(),
                                                      'Hippocampus': hippocampus_dice_std_times_mean.item(),
@@ -134,58 +141,72 @@ def main():
                                 'WhiteMatter': whiteMatter_dice_std.item()}
 
     # plot results
-    plt.plot(range(len(dict_dice_multiplied_by_std_labels['1'])),
+    fig, (ax1, ax2, ax3) = plt.subplots(3, 1)
+
+    ax1.plot(range(len(dict_dice_multiplied_by_std_labels['1'])),
              list(dict_dice_multiplied_by_std_labels['1'].values()), '--o', label='1')
-    plt.xticks(range(len(dict_dice_multiplied_by_std_labels['1'])),
+    ax1.set_xticks(range(len(dict_dice_multiplied_by_std_labels['1'])),
                list(dict_dice_multiplied_by_std_labels['1'].keys()))
-    plt.plot(range(len(dict_dice_multiplied_by_std_labels['2'])),
+    ax1.plot(range(len(dict_dice_multiplied_by_std_labels['2'])),
              list(dict_dice_multiplied_by_std_labels['2'].values()), '--o', label='2')
-    plt.plot(range(len(dict_dice_multiplied_by_std_labels['3'])),
+    ax1.plot(range(len(dict_dice_multiplied_by_std_labels['3'])),
              list(dict_dice_multiplied_by_std_labels['3'].values()), '--o', label='3')
-    plt.plot(range(len(dict_dice_multiplied_by_std_labels['4'])),
+    ax1.plot(range(len(dict_dice_multiplied_by_std_labels['4'])),
              list(dict_dice_multiplied_by_std_labels['4'].values()), '--o', label='4')
-    plt.plot(range(len(dict_dice_multiplied_by_std_labels['5'])),
+    ax1.plot(range(len(dict_dice_multiplied_by_std_labels['5'])),
              list(dict_dice_multiplied_by_std_labels['5'].values()), '--o', label='5')
-    plt.plot(range(len(dict_dice_multiplied_by_std_labels['6'])),
+    ax1.plot(range(len(dict_dice_multiplied_by_std_labels['6'])),
              list(dict_dice_multiplied_by_std_labels['6'].values()), '--o', label='6')
-    plt.ylabel(('(1- Mean Dice)* STD Dice'))
-    plt.legend()
-    plt.show()
+    ax1.plot(range(len(dict_dice_multiplied_by_std_labels['7'])),
+             list(dict_dice_multiplied_by_std_labels['7'].values()), '--o', label='7')
+    ax1.plot(range(len(dict_dice_multiplied_by_std_labels['8'])),
+             list(dict_dice_multiplied_by_std_labels['8'].values()), '--o', label='8')
+    ax1.set_ylabel(('(1- Mean Dice)* STD Dice'))
+    ax1.legend()
+    #plt.show()
 
-    plt.plot(range(len(dict_dice_mean['1'])),
+    ax2.plot(range(len(dict_dice_mean['1'])),
              list(dict_dice_mean['1'].values()), '--o', label='1')
-    plt.xticks(range(len(dict_dice_mean['1'])),
+    ax2.set_xticks(range(len(dict_dice_mean['1'])),
                list(dict_dice_mean['1'].keys()))
-    plt.plot(range(len(dict_dice_mean['2'])),
+    ax2.plot(range(len(dict_dice_mean['2'])),
              list(dict_dice_mean['2'].values()), '--o', label='2')
-    plt.plot(range(len(dict_dice_mean['3'])),
+    ax2.plot(range(len(dict_dice_mean['3'])),
              list(dict_dice_mean['3'].values()), '--o', label='3')
-    plt.plot(range(len(dict_dice_mean['4'])),
+    ax2.plot(range(len(dict_dice_mean['4'])),
              list(dict_dice_mean['4'].values()), '--o', label='4')
-    plt.plot(range(len(dict_dice_mean['5'])),
+    ax2.plot(range(len(dict_dice_mean['5'])),
              list(dict_dice_mean['5'].values()), '--o', label='5')
-    plt.plot(range(len(dict_dice_mean['6'])),
+    ax2.plot(range(len(dict_dice_mean['6'])),
              list(dict_dice_mean['6'].values()), '--o', label='6')
-    plt.ylabel(('Mean Dice'))
-    plt.legend()
-    plt.show()
+    ax2.plot(range(len(dict_dice_mean['7'])),
+             list(dict_dice_mean['7'].values()), '--o', label='7')
+    ax2.plot(range(len(dict_dice_mean['8'])),
+             list(dict_dice_mean['8'].values()), '--o', label='8')
+    ax2.set_ylabel(('Mean Dice'))
+    ax2.legend()
+    #plt.show()
 
-    plt.plot(range(len(dict_dice_std['1'])),
+    ax3.plot(range(len(dict_dice_std['1'])),
              list(dict_dice_std['1'].values()), '--o', label='1')
-    plt.xticks(range(len(dict_dice_std['1'])),
+    ax3.set_xticks(range(len(dict_dice_std['1'])),
                list(dict_dice_std['1'].keys()))
-    plt.plot(range(len(dict_dice_std['2'])),
+    ax3.plot(range(len(dict_dice_std['2'])),
              list(dict_dice_std['2'].values()), '--o', label='2')
-    plt.plot(range(len(dict_dice_std['3'])),
+    ax3.plot(range(len(dict_dice_std['3'])),
              list(dict_dice_std['3'].values()), '--o', label='3')
-    plt.plot(range(len(dict_dice_std['4'])),
+    ax3.plot(range(len(dict_dice_std['4'])),
              list(dict_dice_std['4'].values()), '--o', label='4')
-    plt.plot(range(len(dict_dice_std['5'])),
+    ax3.plot(range(len(dict_dice_std['5'])),
              list(dict_dice_std['5'].values()), '--o', label='5')
-    plt.plot(range(len(dict_dice_std['6'])),
+    ax3.plot(range(len(dict_dice_std['6'])),
              list(dict_dice_std['6'].values()), '--o', label='6')
-    plt.ylabel(('STD Dice'))
-    plt.legend()
+    ax3.plot(range(len(dict_dice_std['7'])),
+             list(dict_dice_std['7'].values()), '--o', label='7')
+    ax3.plot(range(len(dict_dice_std['8'])),
+             list(dict_dice_std['8'].values()), '--o', label='8')
+    ax3.set_ylabel(('STD Dice'))
+    ax3.legend()
     plt.show()
 if __name__ == '__main__':
     main()
