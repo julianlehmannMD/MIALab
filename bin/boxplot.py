@@ -43,7 +43,6 @@ def main():
     _7 = pd.read_csv('mia-result/results_all/Summary/7.csv', sep=';')
     _8 = pd.read_csv('mia-result/results_all/Summary/8.csv', sep=';')
 
-
     # Evaluate Dice and Housedorf
     results_dict = {1: _1, 2: _2, 3: _3, 4: _4, 5: _5, 6: _6, 7: _7, 8: _8}
     dict_dice_multiplied_by_std_labels = {'1': {}, '2': {}, '3': {}, '4': {}, '5': {}, '6': {}, '7': {}, '8': {}}
@@ -142,11 +141,19 @@ def main():
 
     # plot results
     fig, (ax1, ax2, ax3) = plt.subplots(3, 1)
+    dict_labels = {1: 't1w_intensity_feature + t2w_laplacian_feature',
+                   2: 't1w_intensity_feature + t2w_laplacian_feature + t1w_laplacian_feature',
+                   3: 't1w_intensity_feature + t2w_laplacian_feature + t1w_laplacian_feature + t2w_intensity_feature',
+                   4: 't1w_intensity_feature + t2w_laplacian_feature + t1w_laplacian_feature + t2w_intensity_feature + coordinates_feature',
+                   5: 't1w_intensity_feature + t2w_laplacian_feature + t1w_laplacian_feature + t2w_intensity_feature + coordinates_feature + t1w_gradient_intensity_feature',
+                   6: 't1w_intensity_feature + t2w_laplacian_feature + t1w_laplacian_feature + t2w_intensity_feature + coordinates_feature + t1w_gradient_intensity_feature + t2w_gradient_intensity_feature',
+                   7: 't1w_intensity_feature + t2w_laplacian_feature + t1w_laplacian_feature + t2w_intensity_feature + coordinates_feature + t1w_gradient_intensity_feature + t2w_gradient_intensity_feature + t1w_sobel_feature',
+                   8: 't1w_intensity_feature + t2w_laplacian_feature + t1w_laplacian_feature + t2w_intensity_feature + coordinates_feature + t1w_gradient_intensity_feature + t2w_gradient_intensity_feature + t1w_sobel_feature + t2w_sobel_feature'}
 
     ax1.plot(range(len(dict_dice_multiplied_by_std_labels['1'])),
              list(dict_dice_multiplied_by_std_labels['1'].values()), '--o', label='1')
     ax1.set_xticks(range(len(dict_dice_multiplied_by_std_labels['1'])),
-               list(dict_dice_multiplied_by_std_labels['1'].keys()))
+                   list(dict_dice_multiplied_by_std_labels['1'].keys()))
     ax1.plot(range(len(dict_dice_multiplied_by_std_labels['2'])),
              list(dict_dice_multiplied_by_std_labels['2'].values()), '--o', label='2')
     ax1.plot(range(len(dict_dice_multiplied_by_std_labels['3'])),
@@ -163,12 +170,12 @@ def main():
              list(dict_dice_multiplied_by_std_labels['8'].values()), '--o', label='8')
     ax1.set_ylabel(('(1- Mean Dice)* STD Dice'))
     ax1.legend()
-    #plt.show()
+    # plt.show()
 
     ax2.plot(range(len(dict_dice_mean['1'])),
              list(dict_dice_mean['1'].values()), '--o', label='1')
     ax2.set_xticks(range(len(dict_dice_mean['1'])),
-               list(dict_dice_mean['1'].keys()))
+                   list(dict_dice_mean['1'].keys()))
     ax2.plot(range(len(dict_dice_mean['2'])),
              list(dict_dice_mean['2'].values()), '--o', label='2')
     ax2.plot(range(len(dict_dice_mean['3'])),
@@ -185,12 +192,12 @@ def main():
              list(dict_dice_mean['8'].values()), '--o', label='8')
     ax2.set_ylabel(('Mean Dice'))
     ax2.legend()
-    #plt.show()
+    # plt.show()
 
     ax3.plot(range(len(dict_dice_std['1'])),
              list(dict_dice_std['1'].values()), '--o', label='1')
     ax3.set_xticks(range(len(dict_dice_std['1'])),
-               list(dict_dice_std['1'].keys()))
+                   list(dict_dice_std['1'].keys()))
     ax3.plot(range(len(dict_dice_std['2'])),
              list(dict_dice_std['2'].values()), '--o', label='2')
     ax3.plot(range(len(dict_dice_std['3'])),
@@ -208,5 +215,7 @@ def main():
     ax3.set_ylabel(('STD Dice'))
     ax3.legend()
     plt.show()
+
+
 if __name__ == '__main__':
     main()
