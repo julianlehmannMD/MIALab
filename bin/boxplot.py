@@ -44,6 +44,8 @@ def main():
     # Evaluate Dice and Housedorf
     results_dict = {1: _1, 2: _2, 3: _3, 4: _4, 5: _5, 6: _6}
     dict_dice_multiplied_by_std_labels = {'1': {}, '2': {}, '3': {}, '4': {}, '5': {}, '6': {}}
+    dict_dice_mean = {'1': {}, '2': {}, '3': {}, '4': {}, '5': {}, '6': {}}
+    dict_dice_std = {'1': {}, '2': {}, '3': {}, '4': {}, '5': {}, '6': {}}
 
     for i in results_dict:
         data = results_dict[i]
@@ -57,29 +59,49 @@ def main():
         std_idx = np.asarray(summary_statistic[:] == 'STD')
 
         amygdala_idx = np.asarray(summary_label[:] == 'Amygdala')
-        amygdala_dice_std_times_mean = (1 - np.asarray(
-            summary_value[np.logical_and(amygdala_idx, np.logical_and(dice_idx, mean_idx))])) * np.asarray(
-            summary_value[np.logical_and(amygdala_idx, np.logical_and(dice_idx, std_idx))])
+        mean = np.asarray(summary_value[np.logical_and(amygdala_idx, np.logical_and(dice_idx, mean_idx))])
+        std = np.asarray(summary_value[np.logical_and(amygdala_idx, np.logical_and(dice_idx, std_idx))])
+        if mean == 0:
+            std = np.nan
+        amygdala_dice_std_times_mean = (1 - mean) * std
+        amygdala_dice_mean = mean
+        amygdala_dice_std = std
 
         greyMatter_idx = np.asarray(summary_label[:] == 'GreyMatter')
-        greyMatter_dice_std_times_mean = (1 - np.asarray(
-            summary_value[np.logical_and(greyMatter_idx, np.logical_and(dice_idx, mean_idx))])) * np.asarray(
-            summary_value[np.logical_and(greyMatter_idx, np.logical_and(dice_idx, std_idx))])
+        mean = np.asarray(summary_value[np.logical_and(greyMatter_idx, np.logical_and(dice_idx, mean_idx))])
+        std = np.asarray(summary_value[np.logical_and(greyMatter_idx, np.logical_and(dice_idx, std_idx))])
+        if mean == 0:
+            std = np.nan
+        greyMatter_dice_std_times_mean = (1 - mean) * std
+        greyMatter_dice_mean = mean
+        greyMatter_dice_std = std
 
         hippocampus_idx = np.asarray(summary_label[:] == 'Hippocampus')
-        hippocampus_dice_std_times_mean = (1 - np.asarray(
-            summary_value[np.logical_and(hippocampus_idx, np.logical_and(dice_idx, mean_idx))])) * np.asarray(
-            summary_value[np.logical_and(hippocampus_idx, np.logical_and(dice_idx, std_idx))])
+        mean = np.asarray(summary_value[np.logical_and(hippocampus_idx, np.logical_and(dice_idx, mean_idx))])
+        std = np.asarray(summary_value[np.logical_and(hippocampus_idx, np.logical_and(dice_idx, std_idx))])
+        if mean == 0:
+            std = np.nan
+        hippocampus_dice_std_times_mean = (1 - mean) * std
+        hippocampus_dice_mean = mean
+        hippocampus_dice_std = std
 
         thalamus_idx = np.asarray(summary_label[:] == 'Thalamus')
-        thalamus_dice_std_times_mean = (1 - np.asarray(
-            summary_value[np.logical_and(thalamus_idx, np.logical_and(dice_idx, mean_idx))])) * np.asarray(
-            summary_value[np.logical_and(thalamus_idx, np.logical_and(dice_idx, std_idx))])
+        mean = np.asarray(summary_value[np.logical_and(thalamus_idx, np.logical_and(dice_idx, mean_idx))])
+        std = np.asarray(summary_value[np.logical_and(thalamus_idx, np.logical_and(dice_idx, std_idx))])
+        if mean == 0:
+            std = np.nan
+        thalamus_dice_std_times_mean = (1 - mean) * std
+        thalamus_dice_mean = mean
+        thalamus_dice_std = std
 
         whiteMatter_idx = np.asarray(summary_label[:] == 'WhiteMatter')
-        whiteMatter_dice_std_times_mean = (1 - np.asarray(
-            summary_value[np.logical_and(whiteMatter_idx, np.logical_and(dice_idx, mean_idx))])) * np.asarray(
-            summary_value[np.logical_and(whiteMatter_idx, np.logical_and(dice_idx, std_idx))])
+        mean = np.asarray(summary_value[np.logical_and(whiteMatter_idx, np.logical_and(dice_idx, mean_idx))])
+        std = np.asarray(summary_value[np.logical_and(whiteMatter_idx, np.logical_and(dice_idx, std_idx))])
+        if mean == 0:
+            std = np.nan
+        whiteMatter_dice_std_times_mean = (1 - mean) * std
+        whiteMatter_dice_mean = mean
+        whiteMatter_dice_std = std
 
         if i == 1:
             dict_ = '1'
@@ -99,25 +121,71 @@ def main():
                                                      'Thalamus': thalamus_dice_std_times_mean.item(),
                                                      'WhiteMatter': whiteMatter_dice_std_times_mean.item()}
 
+        dict_dice_mean[dict_] = {'Amygdala': amygdala_dice_mean.item(),
+                                 'GreyMatter': greyMatter_dice_mean.item(),
+                                 'Hippocampus': hippocampus_dice_mean.item(),
+                                 'Thalamus': thalamus_dice_mean.item(),
+                                 'WhiteMatter': whiteMatter_dice_mean.item()}
+
+        dict_dice_std[dict_] = {'Amygdala': amygdala_dice_std.item(),
+                                'GreyMatter': greyMatter_dice_std.item(),
+                                'Hippocampus': hippocampus_dice_std.item(),
+                                'Thalamus': thalamus_dice_std.item(),
+                                'WhiteMatter': whiteMatter_dice_std.item()}
+
     # plot results
     plt.plot(range(len(dict_dice_multiplied_by_std_labels['1'])),
-             list(dict_dice_multiplied_by_std_labels['1'].values()), label='1')
+             list(dict_dice_multiplied_by_std_labels['1'].values()), '--o', label='1')
     plt.xticks(range(len(dict_dice_multiplied_by_std_labels['1'])),
                list(dict_dice_multiplied_by_std_labels['1'].keys()))
     plt.plot(range(len(dict_dice_multiplied_by_std_labels['2'])),
-             list(dict_dice_multiplied_by_std_labels['2'].values()), label='2')
+             list(dict_dice_multiplied_by_std_labels['2'].values()), '--o', label='2')
     plt.plot(range(len(dict_dice_multiplied_by_std_labels['3'])),
-             list(dict_dice_multiplied_by_std_labels['3'].values()), label='3')
+             list(dict_dice_multiplied_by_std_labels['3'].values()), '--o', label='3')
     plt.plot(range(len(dict_dice_multiplied_by_std_labels['4'])),
-             list(dict_dice_multiplied_by_std_labels['4'].values()), label='4')
+             list(dict_dice_multiplied_by_std_labels['4'].values()), '--o', label='4')
     plt.plot(range(len(dict_dice_multiplied_by_std_labels['5'])),
-             list(dict_dice_multiplied_by_std_labels['5'].values()), label='5')
+             list(dict_dice_multiplied_by_std_labels['5'].values()), '--o', label='5')
     plt.plot(range(len(dict_dice_multiplied_by_std_labels['6'])),
-             list(dict_dice_multiplied_by_std_labels['6'].values()), label='6')
+             list(dict_dice_multiplied_by_std_labels['6'].values()), '--o', label='6')
     plt.ylabel(('(1- Mean Dice)* STD Dice'))
     plt.legend()
     plt.show()
 
+    plt.plot(range(len(dict_dice_mean['1'])),
+             list(dict_dice_mean['1'].values()), '--o', label='1')
+    plt.xticks(range(len(dict_dice_mean['1'])),
+               list(dict_dice_mean['1'].keys()))
+    plt.plot(range(len(dict_dice_mean['2'])),
+             list(dict_dice_mean['2'].values()), '--o', label='2')
+    plt.plot(range(len(dict_dice_mean['3'])),
+             list(dict_dice_mean['3'].values()), '--o', label='3')
+    plt.plot(range(len(dict_dice_mean['4'])),
+             list(dict_dice_mean['4'].values()), '--o', label='4')
+    plt.plot(range(len(dict_dice_mean['5'])),
+             list(dict_dice_mean['5'].values()), '--o', label='5')
+    plt.plot(range(len(dict_dice_mean['6'])),
+             list(dict_dice_mean['6'].values()), '--o', label='6')
+    plt.ylabel(('Mean Dice'))
+    plt.legend()
+    plt.show()
 
+    plt.plot(range(len(dict_dice_std['1'])),
+             list(dict_dice_std['1'].values()), '--o', label='1')
+    plt.xticks(range(len(dict_dice_std['1'])),
+               list(dict_dice_std['1'].keys()))
+    plt.plot(range(len(dict_dice_std['2'])),
+             list(dict_dice_std['2'].values()), '--o', label='2')
+    plt.plot(range(len(dict_dice_std['3'])),
+             list(dict_dice_std['3'].values()), '--o', label='3')
+    plt.plot(range(len(dict_dice_std['4'])),
+             list(dict_dice_std['4'].values()), '--o', label='4')
+    plt.plot(range(len(dict_dice_std['5'])),
+             list(dict_dice_std['5'].values()), '--o', label='5')
+    plt.plot(range(len(dict_dice_std['6'])),
+             list(dict_dice_std['6'].values()), '--o', label='6')
+    plt.ylabel(('STD Dice'))
+    plt.legend()
+    plt.show()
 if __name__ == '__main__':
     main()
