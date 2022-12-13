@@ -1,3 +1,5 @@
+import time
+
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -105,6 +107,8 @@ def main():
         whiteMatter_dice_mean = mean
         whiteMatter_dice_std = std
 
+
+
         if i == 1:
             dict_ = '1'
         elif i == 2:
@@ -139,7 +143,8 @@ def main():
                                 'Thalamus': thalamus_dice_std.item(),
                                 'WhiteMatter': whiteMatter_dice_std.item()}
 
-    # plot results
+
+
     fig, (ax1, ax2, ax3) = plt.subplots(3, 1)
     dict_labels = {1: 't1w_intensity_feature + t2w_laplacian_feature',
                    2: 't1w_intensity_feature + t2w_laplacian_feature + t1w_laplacian_feature',
@@ -214,7 +219,59 @@ def main():
              list(dict_dice_std['8'].values()), '--o', label='8')
     ax3.set_ylabel(('STD Dice'))
     ax3.legend()
-    plt.show()
+  #  plt.show()
+
+
+    xaxis = ['t2w_laplacian', 't1w_laplacian', 't2w_intensity', 'coordinates','t1w_gradient_intensity','t2w_gradient_intensity','t1w_sobel','t2w_sobel']
+    fig, byLabelNumber = plt.subplots()
+    byLabelNumber.plot(xaxis,
+             [dict_dice_multiplied_by_std_labels["1"]["Amygdala"], dict_dice_multiplied_by_std_labels["2"]["Amygdala"],
+              dict_dice_multiplied_by_std_labels["3"]["Amygdala"], dict_dice_multiplied_by_std_labels["4"]["Amygdala"],
+              dict_dice_multiplied_by_std_labels["5"]["Amygdala"], dict_dice_multiplied_by_std_labels["6"]["Amygdala"],
+              dict_dice_multiplied_by_std_labels["7"]["Amygdala"], dict_dice_multiplied_by_std_labels["8"]["Amygdala"]],'o' ,label="Amygdala")
+    byLabelNumber.plot(xaxis, [dict_dice_multiplied_by_std_labels["1"]["GreyMatter"],
+                                        dict_dice_multiplied_by_std_labels["2"]["GreyMatter"],
+                                        dict_dice_multiplied_by_std_labels["3"]["GreyMatter"],
+                                        dict_dice_multiplied_by_std_labels["4"]["GreyMatter"],
+                                        dict_dice_multiplied_by_std_labels["5"]["GreyMatter"],
+                                        dict_dice_multiplied_by_std_labels["6"]["GreyMatter"],
+                                        dict_dice_multiplied_by_std_labels["7"]["GreyMatter"],
+                                        dict_dice_multiplied_by_std_labels["8"]["GreyMatter"]],'x',label="Grey Matter")
+    byLabelNumber.plot(xaxis, [dict_dice_multiplied_by_std_labels["1"]["Hippocampus"],
+                                        dict_dice_multiplied_by_std_labels["2"]["Hippocampus"],
+                                        dict_dice_multiplied_by_std_labels["3"]["Hippocampus"],
+                                        dict_dice_multiplied_by_std_labels["4"]["Hippocampus"],
+                                        dict_dice_multiplied_by_std_labels["5"]["Hippocampus"],
+                                        dict_dice_multiplied_by_std_labels["6"]["Hippocampus"],
+                                        dict_dice_multiplied_by_std_labels["7"]["Hippocampus"],
+                                        dict_dice_multiplied_by_std_labels["8"]["Hippocampus"]], '*',label="Hippocampus")
+    byLabelNumber.plot(xaxis, [dict_dice_multiplied_by_std_labels["1"]["Thalamus"],
+                                        dict_dice_multiplied_by_std_labels["2"]["Thalamus"],
+                                        dict_dice_multiplied_by_std_labels["3"]["Thalamus"],
+                                        dict_dice_multiplied_by_std_labels["4"]["Thalamus"],
+                                        dict_dice_multiplied_by_std_labels["5"]["Thalamus"],
+                                        dict_dice_multiplied_by_std_labels["6"]["Thalamus"],
+                                        dict_dice_multiplied_by_std_labels["7"]["Thalamus"],
+                                        dict_dice_multiplied_by_std_labels["8"]["Thalamus"]],'v', label="Thalamus")
+    byLabelNumber.plot(xaxis, [dict_dice_multiplied_by_std_labels["1"]["WhiteMatter"],
+                                        dict_dice_multiplied_by_std_labels["2"]["WhiteMatter"],
+                                        dict_dice_multiplied_by_std_labels["3"]["WhiteMatter"],
+                                        dict_dice_multiplied_by_std_labels["4"]["WhiteMatter"],
+                                        dict_dice_multiplied_by_std_labels["5"]["WhiteMatter"],
+                                        dict_dice_multiplied_by_std_labels["6"]["WhiteMatter"],
+                                        dict_dice_multiplied_by_std_labels["7"]["WhiteMatter"],
+                                        dict_dice_multiplied_by_std_labels["8"]["WhiteMatter"]],'s', label="White Matter")
+    byLabelNumber.legend()
+    byLabelNumber.set_ylabel("(1- Mean Dice)* STD Dice")
+    byLabelNumber.set_xlabel("Added feature")
+    plt.xticks(rotation=90)
+    plt.subplots_adjust(bottom=0.50)
+   # plt.show()
+
+    t=time.localtime()
+    current_time = time.strftime("%H:%M:%S", t)
+    plt.savefig("sortedbylabel"+current_time+".png")
+
 
 
 if __name__ == '__main__':
