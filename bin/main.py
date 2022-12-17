@@ -63,7 +63,7 @@ def main(result_dir: str, data_atlas_dir: str, data_train_dir: str, data_test_di
                                           futil.BrainImageFilePathGenerator(),
                                           futil.DataDirectoryFilter())
 
-    i_global = 8# change this number
+    i_global = 7# change this number
     robustness_best = float('inf')
     first_flag = 1
 
@@ -96,6 +96,7 @@ def main(result_dir: str, data_atlas_dir: str, data_train_dir: str, data_test_di
         i_local = 0
         for key, state in pre_process_params.items():
             if i_local == i_global:
+                print(key)
                 pre_process_params[key] = True
             i_local += 1
 
