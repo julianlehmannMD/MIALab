@@ -63,11 +63,11 @@ def main(result_dir: str, data_atlas_dir: str, data_train_dir: str, data_test_di
                                           futil.BrainImageFilePathGenerator(),
                                           futil.DataDirectoryFilter())
 
-    i_global = 11 # change this number
+    i_global = 4# change this number
     robustness_best = float('inf')
     first_flag = 1
 
-    for itr in range(1): # change this number
+    for itr in range(9): # change this number
         # load atlas images
         putil.load_atlas_images(data_atlas_dir)
 
@@ -82,14 +82,14 @@ def main(result_dir: str, data_atlas_dir: str, data_train_dir: str, data_test_di
         pre_process_params = {'skullstrip_pre': True,
                               'normalization_pre': True,
                               'registration_pre': True,
-                              't1w_intensity_feature': True,
-                              't2w_laplacian_feature': True,
-                              't1w_laplacian_feature': True,
-                              't2w_intensity_feature': True,
-                              'coordinates_feature': True,
-                              't1w_gradient_intensity_feature': True,
-                              't2w_gradient_intensity_feature': True,
-                              't1w_sobel_feature': True,
+                              't1w_intensity_feature': False,
+                              't2w_laplacian_feature': False,
+                              't1w_laplacian_feature': False,
+                              't2w_intensity_feature': False,
+                              'coordinates_feature': False,
+                              't1w_gradient_intensity_feature': False,
+                              't2w_gradient_intensity_feature': False,
+                              't1w_sobel_feature': False,
                               't2w_sobel_feature': False
                               }
 
@@ -225,39 +225,39 @@ def main(result_dir: str, data_atlas_dir: str, data_train_dir: str, data_test_di
         amygdala_idx = np.asarray(summary_label[:] == 'Amygdala')
         mean = np.asarray(summary_value[np.logical_and(amygdala_idx, np.logical_and(dice_idx, mean_idx))])
         std = np.asarray(summary_value[np.logical_and(amygdala_idx, np.logical_and(dice_idx, std_idx))])
-        if std == 0:
+        if mean <= 0.01:
             std = 1
         amygdala_dice_std_times_mean = (1 - mean) * std
 
         greyMatter_idx = np.asarray(summary_label[:] == 'GreyMatter')
         mean = np.asarray(summary_value[np.logical_and(greyMatter_idx, np.logical_and(dice_idx, mean_idx))])
         std = np.asarray(summary_value[np.logical_and(greyMatter_idx, np.logical_and(dice_idx, std_idx))])
-        if std == 0:
+        if mean <= 0.01:
             std = 1
         greyMatter_dice_std_times_mean = (1 - mean) * std
 
         hippocampus_idx = np.asarray(summary_label[:] == 'Hippocampus')
         mean = np.asarray(summary_value[np.logical_and(hippocampus_idx, np.logical_and(dice_idx, mean_idx))])
         std = np.asarray(summary_value[np.logical_and(hippocampus_idx, np.logical_and(dice_idx, std_idx))])
-        if std == 0:
+        if mean <= 0.01:
             std = 1
         hippocampus_dice_std_times_mean = (1 - mean) * std
 
         thalamus_idx = np.asarray(summary_label[:] == 'Thalamus')
         mean = np.asarray(summary_value[np.logical_and(thalamus_idx, np.logical_and(dice_idx, mean_idx))])
         std = np.asarray(summary_value[np.logical_and(thalamus_idx, np.logical_and(dice_idx, std_idx))])
-        if std == 0:
+        if mean <= 0.01:
             std = 1
         thalamus_dice_std_times_mean = (1 - mean) * std
 
         whiteMatter_idx = np.asarray(summary_label[:] == 'WhiteMatter')
         mean = np.asarray(summary_value[np.logical_and(whiteMatter_idx, np.logical_and(dice_idx, mean_idx))])
         std = np.asarray(summary_value[np.logical_and(whiteMatter_idx, np.logical_and(dice_idx, std_idx))])
-        if std == 0:
+        if mean <= 0.01:
             std = 1
         whiteMatter_dice_std_times_mean = (1 - mean) * std
 
-        new_robustness = np.mean([whiteMatter_dice_std_times_mean, thalamus_dice_std_times_mean, hippocampus_dice_std_times_mean, greyMatter_dice_std_times_mean, amygdala_dice_std_times_mean])
+        new_robustness = np.nanmean([whiteMatter_dice_std_times_mean, thalamus_dice_std_times_mean, hippocampus_dice_std_times_mean, greyMatter_dice_std_times_mean, amygdala_dice_std_times_mean])
         if new_robustness == 0:
             new_robustness = float('inf')
         if robustness_best > new_robustness:

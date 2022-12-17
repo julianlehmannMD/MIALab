@@ -65,47 +65,48 @@ def main():
         amygdala_idx = np.asarray(summary_label[:] == 'Amygdala')
         mean = np.asarray(summary_value[np.logical_and(amygdala_idx, np.logical_and(dice_idx, mean_idx))])
         std = np.asarray(summary_value[np.logical_and(amygdala_idx, np.logical_and(dice_idx, std_idx))])
-        if mean == 0:
+        amygdala_dice_std = std
+        if mean <= 0.01:
             std = np.nan
         amygdala_dice_std_times_mean = (1 - mean) * std
         amygdala_dice_mean = mean
-        amygdala_dice_std = std
 
         greyMatter_idx = np.asarray(summary_label[:] == 'GreyMatter')
         mean = np.asarray(summary_value[np.logical_and(greyMatter_idx, np.logical_and(dice_idx, mean_idx))])
         std = np.asarray(summary_value[np.logical_and(greyMatter_idx, np.logical_and(dice_idx, std_idx))])
-        if mean == 0:
+        greyMatter_dice_std = std
+        if mean == 0.01:
             std = np.nan
         greyMatter_dice_std_times_mean = (1 - mean) * std
         greyMatter_dice_mean = mean
-        greyMatter_dice_std = std
 
         hippocampus_idx = np.asarray(summary_label[:] == 'Hippocampus')
         mean = np.asarray(summary_value[np.logical_and(hippocampus_idx, np.logical_and(dice_idx, mean_idx))])
         std = np.asarray(summary_value[np.logical_and(hippocampus_idx, np.logical_and(dice_idx, std_idx))])
-        if mean == 0:
+        hippocampus_dice_std = std
+        if mean == 0.01:
             std = np.nan
         hippocampus_dice_std_times_mean = (1 - mean) * std
         hippocampus_dice_mean = mean
-        hippocampus_dice_std = std
 
         thalamus_idx = np.asarray(summary_label[:] == 'Thalamus')
         mean = np.asarray(summary_value[np.logical_and(thalamus_idx, np.logical_and(dice_idx, mean_idx))])
         std = np.asarray(summary_value[np.logical_and(thalamus_idx, np.logical_and(dice_idx, std_idx))])
-        if mean == 0:
+        thalamus_dice_std = std
+        if mean == 0.01:
             std = np.nan
         thalamus_dice_std_times_mean = (1 - mean) * std
         thalamus_dice_mean = mean
-        thalamus_dice_std = std
 
         whiteMatter_idx = np.asarray(summary_label[:] == 'WhiteMatter')
         mean = np.asarray(summary_value[np.logical_and(whiteMatter_idx, np.logical_and(dice_idx, mean_idx))])
         std = np.asarray(summary_value[np.logical_and(whiteMatter_idx, np.logical_and(dice_idx, std_idx))])
-        if mean == 0:
+        whiteMatter_dice_std = std
+        if mean == 0.01:
             std = np.nan
         whiteMatter_dice_std_times_mean = (1 - mean) * std
         whiteMatter_dice_mean = mean
-        whiteMatter_dice_std = std
+
 
 
 
@@ -261,16 +262,51 @@ def main():
                                         dict_dice_multiplied_by_std_labels["6"]["WhiteMatter"],
                                         dict_dice_multiplied_by_std_labels["7"]["WhiteMatter"],
                                         dict_dice_multiplied_by_std_labels["8"]["WhiteMatter"]],'s', label="White Matter")
+
+    values_1 = np.array(list(dict_dice_multiplied_by_std_labels['1'].values()))
+    values_2 = np.array(list(dict_dice_multiplied_by_std_labels['2'].values()))
+    values_3 = np.array(list(dict_dice_multiplied_by_std_labels['3'].values()))
+    values_4 = np.array(list(dict_dice_multiplied_by_std_labels['4'].values()))
+    values_5 = np.array(list(dict_dice_multiplied_by_std_labels['5'].values()))
+    values_6 = np.array(list(dict_dice_multiplied_by_std_labels['6'].values()))
+    values_7 = np.array(list(dict_dice_multiplied_by_std_labels['7'].values()))
+    values_8 = np.array(list(dict_dice_multiplied_by_std_labels['8'].values()))
+
+    values_1[np.isnan(values_1)] = 0.5
+    values_2[np.isnan(values_2)] = 0.5
+    values_3[np.isnan(values_3)] = 0.5
+    values_4[np.isnan(values_4)] = 0.5
+    values_5[np.isnan(values_5)] = 0.5
+    values_6[np.isnan(values_6)] = 0.5
+    values_7[np.isnan(values_7)] = 0.5
+    values_8[np.isnan(values_8)] = 0.5
+
+
+
+
+    if False:
+        byLabelNumber.plot(xaxis, [np.nanmean(np.array(list(dict_dice_multiplied_by_std_labels['1'].values()))),
+                               np.nanmean(np.array(list(dict_dice_multiplied_by_std_labels['2'].values()))),
+                               np.nanmean(np.array(list(dict_dice_multiplied_by_std_labels['3'].values()))),
+                               np.nanmean(np.array(list(dict_dice_multiplied_by_std_labels['4'].values()))),
+                               np.nanmean(np.array(list(dict_dice_multiplied_by_std_labels['5'].values()))),
+                               np.nanmean(np.array(list(dict_dice_multiplied_by_std_labels['6'].values()))),
+                               np.nanmean(np.array(list(dict_dice_multiplied_by_std_labels['7'].values()))),
+                               np.nanmean(np.array(list(dict_dice_multiplied_by_std_labels['8'].values())))], 'ro')
+
+    byLabelNumber.plot(xaxis,[np.mean(values_1), np.mean(values_2),
+                              np.mean(values_3),np.mean(values_4),np.mean(values_5),np.mean(values_6)
+                              ,np.mean(values_7),np.mean(values_8)], 'ro')
     byLabelNumber.legend()
     byLabelNumber.set_ylabel("(1- Mean Dice)* STD Dice")
     byLabelNumber.set_xlabel("Added feature")
     plt.xticks(rotation=90)
     plt.subplots_adjust(bottom=0.50)
-   # plt.show()
-
-    t=time.localtime()
-    current_time = time.strftime("%H:%M:%S", t)
-    plt.savefig("sortedbylabel"+current_time+".png")
+    plt.show()
+    if False:
+        t=time.localtime()
+        current_time = time.strftime("%H:%M:%S", t)
+        plt.savefig("sortedbylabel"+current_time+".png")
 
 
 
