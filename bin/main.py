@@ -63,7 +63,7 @@ def main(result_dir: str, data_atlas_dir: str, data_train_dir: str, data_test_di
                                           futil.BrainImageFilePathGenerator(),
                                           futil.DataDirectoryFilter())
 
-    i_global = 4# change this number
+    i_global = 3# change this number
     robustness_best = float('inf')
     first_flag = 1
 
