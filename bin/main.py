@@ -63,11 +63,11 @@ def main(result_dir: str, data_atlas_dir: str, data_train_dir: str, data_test_di
                                           futil.BrainImageFilePathGenerator(),
                                           futil.DataDirectoryFilter())
 
-    i_global = 3# change this number
+    i_global = 4# change this number
     robustness_best = float('inf')
     first_flag = 1
 
-    for itr in range(9): # change this number
+    for itr in range(8): # change this number
         # load atlas images
         putil.load_atlas_images(data_atlas_dir)
 
@@ -82,7 +82,7 @@ def main(result_dir: str, data_atlas_dir: str, data_train_dir: str, data_test_di
         pre_process_params = {'skullstrip_pre': True,
                               'normalization_pre': True,
                               'registration_pre': True,
-                              't1w_intensity_feature': False,
+                              't1w_intensity_feature': True,
                               't2w_laplacian_feature': False,
                               't1w_laplacian_feature': False,
                               't2w_intensity_feature': False,
