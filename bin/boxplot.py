@@ -18,23 +18,23 @@ def main():
     # todo: read the data into a list
     # todo: plot the Dice coefficients per label (i.e. white matter, gray matter, hippocampus, amygdala, thalamus)
     #  in a boxplot
+    if False:
+        # Read in data file
+        T1_results = pd.read_csv('mia-result/results_all/Normal/T1_results.csv', sep=';')
+        T1_and_T2_results = pd.read_csv('mia-result/results_all/Normal/T1_and_T2_results.csv', sep=';')
+        standard_7_results = pd.read_csv('mia-result/results_all/Normal/7_standard_results.csv', sep=';')
+        # T1_and_gradients_results = pd.read_csv('mia-result/results_all/Normal/T1_and_Gradients_results.csv', sep=';')
 
-    # Read in data file
-    T1_results = pd.read_csv('mia-result/results_all/Normal/T1_results.csv', sep=';')
-    T1_and_T2_results = pd.read_csv('mia-result/results_all/Normal/T1_and_T2_results.csv', sep=';')
-    standard_7_results = pd.read_csv('mia-result/results_all/Normal/7_standard_results.csv', sep=';')
-    # T1_and_gradients_results = pd.read_csv('mia-result/results_all/Normal/T1_and_Gradients_results.csv', sep=';')
+        # Assign feature number to new data set
+        data1 = pd.DataFrame(T1_results).assign(Features='T1 intensity')
+        data2 = pd.DataFrame(T1_and_T2_results).assign(Features='T1 and T2 intensities')
+        # data3 = pd.DataFrame(T1_and_gradients_results).assign(Features='T1 intensity and T1&T2 gradients')
+        data4 = pd.DataFrame(standard_7_results).assign(Features='7 standard')
 
-    # Assign feature number to new data set
-    data1 = pd.DataFrame(T1_results).assign(Features='T1 intensity')
-    data2 = pd.DataFrame(T1_and_T2_results).assign(Features='T1 and T2 intensities')
-    # data3 = pd.DataFrame(T1_and_gradients_results).assign(Features='T1 intensity and T1&T2 gradients')
-    data4 = pd.DataFrame(standard_7_results).assign(Features='7 standard')
-
-    # Concat data sets for boxplot
-    cdf = pd.concat([data1, data2, data4])
-    # ax = sns.boxplot(x="LABEL", y="HDRFDST", hue="Features", data=cdf)
-    # plt.show()
+        # Concat data sets for boxplot
+        cdf = pd.concat([data1, data2, data4])
+        # ax = sns.boxplot(x="LABEL", y="HDRFDST", hue="Features", data=cdf)
+        # plt.show()
 
     _0 = pd.read_csv('mia-result/results_all/Summary/0.csv', sep=';')
     _1 = pd.read_csv('mia-result/results_all/Summary/1.csv', sep=';')
@@ -149,15 +149,15 @@ def main():
 
 
     fig, (ax1, ax2, ax3) = plt.subplots(3, 1)
-    dict_labels = {1: 't1w_intensity_feature + t2w_laplacian_feature',
-                   2: 't1w_intensity_feature + t2w_laplacian_feature + t1w_laplacian_feature',
-                   3: 't1w_intensity_feature + t2w_laplacian_feature + t1w_laplacian_feature + t2w_intensity_feature',
-                   4: 't1w_intensity_feature + t2w_laplacian_feature + t1w_laplacian_feature + t2w_intensity_feature + coordinates_feature',
-                   5: 't1w_intensity_feature + t2w_laplacian_feature + t1w_laplacian_feature + t2w_intensity_feature + coordinates_feature + t1w_gradient_intensity_feature',
-                   6: 't1w_intensity_feature + t2w_laplacian_feature + t1w_laplacian_feature + t2w_intensity_feature + coordinates_feature + t1w_gradient_intensity_feature + t2w_gradient_intensity_feature',
-                   7: 't1w_intensity_feature + t2w_laplacian_feature + t1w_laplacian_feature + t2w_intensity_feature + coordinates_feature + t1w_gradient_intensity_feature + t2w_gradient_intensity_feature + t1w_sobel_feature',
-                   8: 't1w_intensity_feature + t2w_laplacian_feature + t1w_laplacian_feature + t2w_intensity_feature + coordinates_feature + t1w_gradient_intensity_feature + t2w_gradient_intensity_feature + t1w_sobel_feature + t2w_sobel_feature'}
-
+    dict_labels = {0: 'coordinates_feature',
+                   1: '+ t1w_sobel_feature',
+                    2: '+ t1w_intensity_feature',
+                    3: '+ t2w_laplacian_feature',
+                    4: '+ t1w_gradient_intensity_feature',
+                    5: '+ t2w_gradient_intensity_feature',
+                    6: '+ t1w_laplacian_feature',
+                    7: '+ t2w_sobel_feature',
+                    8: '+ t2w_intensity_feature'}
     ax1.plot(range(len(dict_dice_multiplied_by_std_labels['0'])),
              list(dict_dice_multiplied_by_std_labels['0'].values()), '--o', label='0')
     ax1.plot(range(len(dict_dice_multiplied_by_std_labels['1'])),
@@ -231,7 +231,15 @@ def main():
   #  plt.show()
 
 
-    xaxis = ['t2w_laplacian', 't1w_laplacian', 't2w_intensity', 'coordinates','t1w_gradient_intensity','t2w_gradient_intensity','t1w_sobel','t2w_sobel']
+    xaxis = ['coordinates_feature',
+                '+ t1w_sobel_feature',
+                '+ t1w_intensity_feature',
+                '+ t2w_laplacian_feature',
+                '+ t1w_gradient_intensity_feature',
+                '+ t2w_gradient_intensity_feature',
+                '+ t1w_laplacian_feature',
+                '+ t2w_sobel_feature',
+                '+ t2w_intensity_feature']
     fig, byLabelNumber = plt.subplots()
     byLabelNumber.plot(xaxis,
              [dict_dice_multiplied_by_std_labels["0"]["Amygdala"],dict_dice_multiplied_by_std_labels["1"]["Amygdala"], dict_dice_multiplied_by_std_labels["2"]["Amygdala"],
