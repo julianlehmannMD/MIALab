@@ -36,6 +36,7 @@ def main():
     # ax = sns.boxplot(x="LABEL", y="HDRFDST", hue="Features", data=cdf)
     # plt.show()
 
+    _0 = pd.read_csv('mia-result/results_all/Summary/0.csv', sep=';')
     _1 = pd.read_csv('mia-result/results_all/Summary/1.csv', sep=';')
     _2 = pd.read_csv('mia-result/results_all/Summary/2.csv', sep=';')
     _3 = pd.read_csv('mia-result/results_all/Summary/3.csv', sep=';')
@@ -46,10 +47,10 @@ def main():
     _8 = pd.read_csv('mia-result/results_all/Summary/8.csv', sep=';')
 
     # Evaluate Dice and Housedorf
-    results_dict = {1: _1, 2: _2, 3: _3, 4: _4, 5: _5, 6: _6, 7: _7, 8: _8}
-    dict_dice_multiplied_by_std_labels = {'1': {}, '2': {}, '3': {}, '4': {}, '5': {}, '6': {}, '7': {}, '8': {}}
-    dict_dice_mean = {'1': {}, '2': {}, '3': {}, '4': {}, '5': {}, '6': {}, '7': {}, '8': {}}
-    dict_dice_std = {'1': {}, '2': {}, '3': {}, '4': {}, '5': {}, '6': {}, '7': {}, '8': {}}
+    results_dict = {0: _0, 1: _1, 2: _2, 3: _3, 4: _4, 5: _5, 6: _6, 7: _7, 8: _8}
+    dict_dice_multiplied_by_std_labels = {'0': {},'1': {}, '2': {}, '3': {}, '4': {}, '5': {}, '6': {}, '7': {}, '8': {}}
+    dict_dice_mean = {'0': {},'1': {}, '2': {}, '3': {}, '4': {}, '5': {}, '6': {}, '7': {}, '8': {}}
+    dict_dice_std = {'0': {},'1': {}, '2': {}, '3': {}, '4': {}, '5': {}, '6': {}, '7': {}, '8': {}}
 
     for i in results_dict:
         data = results_dict[i]
@@ -75,7 +76,7 @@ def main():
         mean = np.asarray(summary_value[np.logical_and(greyMatter_idx, np.logical_and(dice_idx, mean_idx))])
         std = np.asarray(summary_value[np.logical_and(greyMatter_idx, np.logical_and(dice_idx, std_idx))])
         greyMatter_dice_std = std
-        if mean == 0.01:
+        if mean <= 0.01:
             std = np.nan
         greyMatter_dice_std_times_mean = (1 - mean) * std
         greyMatter_dice_mean = mean
@@ -84,7 +85,7 @@ def main():
         mean = np.asarray(summary_value[np.logical_and(hippocampus_idx, np.logical_and(dice_idx, mean_idx))])
         std = np.asarray(summary_value[np.logical_and(hippocampus_idx, np.logical_and(dice_idx, std_idx))])
         hippocampus_dice_std = std
-        if mean == 0.01:
+        if mean <= 0.01:
             std = np.nan
         hippocampus_dice_std_times_mean = (1 - mean) * std
         hippocampus_dice_mean = mean
@@ -93,7 +94,7 @@ def main():
         mean = np.asarray(summary_value[np.logical_and(thalamus_idx, np.logical_and(dice_idx, mean_idx))])
         std = np.asarray(summary_value[np.logical_and(thalamus_idx, np.logical_and(dice_idx, std_idx))])
         thalamus_dice_std = std
-        if mean == 0.01:
+        if mean <= 0.01:
             std = np.nan
         thalamus_dice_std_times_mean = (1 - mean) * std
         thalamus_dice_mean = mean
@@ -102,14 +103,15 @@ def main():
         mean = np.asarray(summary_value[np.logical_and(whiteMatter_idx, np.logical_and(dice_idx, mean_idx))])
         std = np.asarray(summary_value[np.logical_and(whiteMatter_idx, np.logical_and(dice_idx, std_idx))])
         whiteMatter_dice_std = std
-        if mean == 0.01:
+        if mean <= 0.01:
             std = np.nan
         whiteMatter_dice_std_times_mean = (1 - mean) * std
         whiteMatter_dice_mean = mean
 
 
 
-
+        if i == 0:
+            dict_ = '0'
         if i == 1:
             dict_ = '1'
         elif i == 2:
@@ -156,6 +158,8 @@ def main():
                    7: 't1w_intensity_feature + t2w_laplacian_feature + t1w_laplacian_feature + t2w_intensity_feature + coordinates_feature + t1w_gradient_intensity_feature + t2w_gradient_intensity_feature + t1w_sobel_feature',
                    8: 't1w_intensity_feature + t2w_laplacian_feature + t1w_laplacian_feature + t2w_intensity_feature + coordinates_feature + t1w_gradient_intensity_feature + t2w_gradient_intensity_feature + t1w_sobel_feature + t2w_sobel_feature'}
 
+    ax1.plot(range(len(dict_dice_multiplied_by_std_labels['0'])),
+             list(dict_dice_multiplied_by_std_labels['0'].values()), '--o', label='0')
     ax1.plot(range(len(dict_dice_multiplied_by_std_labels['1'])),
              list(dict_dice_multiplied_by_std_labels['1'].values()), '--o', label='1')
     ax1.set_xticks(range(len(dict_dice_multiplied_by_std_labels['1'])),
@@ -178,6 +182,8 @@ def main():
     ax1.legend()
     # plt.show()
 
+    ax2.plot(range(len(dict_dice_mean['0'])),
+             list(dict_dice_mean['0'].values()), '--o', label='0')
     ax2.plot(range(len(dict_dice_mean['1'])),
              list(dict_dice_mean['1'].values()), '--o', label='1')
     ax2.set_xticks(range(len(dict_dice_mean['1'])),
@@ -200,6 +206,8 @@ def main():
     ax2.legend()
     # plt.show()
 
+    ax3.plot(range(len(dict_dice_std['0'])),
+             list(dict_dice_std['0'].values()), '--o', label='0')
     ax3.plot(range(len(dict_dice_std['1'])),
              list(dict_dice_std['1'].values()), '--o', label='1')
     ax3.set_xticks(range(len(dict_dice_std['1'])),
@@ -226,11 +234,11 @@ def main():
     xaxis = ['t2w_laplacian', 't1w_laplacian', 't2w_intensity', 'coordinates','t1w_gradient_intensity','t2w_gradient_intensity','t1w_sobel','t2w_sobel']
     fig, byLabelNumber = plt.subplots()
     byLabelNumber.plot(xaxis,
-             [dict_dice_multiplied_by_std_labels["1"]["Amygdala"], dict_dice_multiplied_by_std_labels["2"]["Amygdala"],
+             [dict_dice_multiplied_by_std_labels["0"]["Amygdala"],dict_dice_multiplied_by_std_labels["1"]["Amygdala"], dict_dice_multiplied_by_std_labels["2"]["Amygdala"],
               dict_dice_multiplied_by_std_labels["3"]["Amygdala"], dict_dice_multiplied_by_std_labels["4"]["Amygdala"],
               dict_dice_multiplied_by_std_labels["5"]["Amygdala"], dict_dice_multiplied_by_std_labels["6"]["Amygdala"],
               dict_dice_multiplied_by_std_labels["7"]["Amygdala"], dict_dice_multiplied_by_std_labels["8"]["Amygdala"]],'o' ,label="Amygdala")
-    byLabelNumber.plot(xaxis, [dict_dice_multiplied_by_std_labels["1"]["GreyMatter"],
+    byLabelNumber.plot(xaxis, [dict_dice_multiplied_by_std_labels["0"]["GreyMatter"],dict_dice_multiplied_by_std_labels["1"]["GreyMatter"],
                                         dict_dice_multiplied_by_std_labels["2"]["GreyMatter"],
                                         dict_dice_multiplied_by_std_labels["3"]["GreyMatter"],
                                         dict_dice_multiplied_by_std_labels["4"]["GreyMatter"],
@@ -238,7 +246,7 @@ def main():
                                         dict_dice_multiplied_by_std_labels["6"]["GreyMatter"],
                                         dict_dice_multiplied_by_std_labels["7"]["GreyMatter"],
                                         dict_dice_multiplied_by_std_labels["8"]["GreyMatter"]],'x',label="Grey Matter")
-    byLabelNumber.plot(xaxis, [dict_dice_multiplied_by_std_labels["1"]["Hippocampus"],
+    byLabelNumber.plot(xaxis, [dict_dice_multiplied_by_std_labels["0"]["Hippocampus"],dict_dice_multiplied_by_std_labels["1"]["Hippocampus"],
                                         dict_dice_multiplied_by_std_labels["2"]["Hippocampus"],
                                         dict_dice_multiplied_by_std_labels["3"]["Hippocampus"],
                                         dict_dice_multiplied_by_std_labels["4"]["Hippocampus"],
@@ -246,7 +254,8 @@ def main():
                                         dict_dice_multiplied_by_std_labels["6"]["Hippocampus"],
                                         dict_dice_multiplied_by_std_labels["7"]["Hippocampus"],
                                         dict_dice_multiplied_by_std_labels["8"]["Hippocampus"]], '*',label="Hippocampus")
-    byLabelNumber.plot(xaxis, [dict_dice_multiplied_by_std_labels["1"]["Thalamus"],
+    byLabelNumber.plot(xaxis, [dict_dice_multiplied_by_std_labels["0"]["Thalamus"],
+                               dict_dice_multiplied_by_std_labels["1"]["Thalamus"],
                                         dict_dice_multiplied_by_std_labels["2"]["Thalamus"],
                                         dict_dice_multiplied_by_std_labels["3"]["Thalamus"],
                                         dict_dice_multiplied_by_std_labels["4"]["Thalamus"],
@@ -254,7 +263,8 @@ def main():
                                         dict_dice_multiplied_by_std_labels["6"]["Thalamus"],
                                         dict_dice_multiplied_by_std_labels["7"]["Thalamus"],
                                         dict_dice_multiplied_by_std_labels["8"]["Thalamus"]],'v', label="Thalamus")
-    byLabelNumber.plot(xaxis, [dict_dice_multiplied_by_std_labels["1"]["WhiteMatter"],
+    byLabelNumber.plot(xaxis, [dict_dice_multiplied_by_std_labels["0"]["WhiteMatter"],
+                               dict_dice_multiplied_by_std_labels["1"]["WhiteMatter"],
                                         dict_dice_multiplied_by_std_labels["2"]["WhiteMatter"],
                                         dict_dice_multiplied_by_std_labels["3"]["WhiteMatter"],
                                         dict_dice_multiplied_by_std_labels["4"]["WhiteMatter"],
@@ -263,6 +273,7 @@ def main():
                                         dict_dice_multiplied_by_std_labels["7"]["WhiteMatter"],
                                         dict_dice_multiplied_by_std_labels["8"]["WhiteMatter"]],'s', label="White Matter")
 
+    values_0 = np.array(list(dict_dice_multiplied_by_std_labels['0'].values()))
     values_1 = np.array(list(dict_dice_multiplied_by_std_labels['1'].values()))
     values_2 = np.array(list(dict_dice_multiplied_by_std_labels['2'].values()))
     values_3 = np.array(list(dict_dice_multiplied_by_std_labels['3'].values()))
@@ -272,6 +283,7 @@ def main():
     values_7 = np.array(list(dict_dice_multiplied_by_std_labels['7'].values()))
     values_8 = np.array(list(dict_dice_multiplied_by_std_labels['8'].values()))
 
+    values_0[np.isnan(values_0)] = 0.5
     values_1[np.isnan(values_1)] = 0.5
     values_2[np.isnan(values_2)] = 0.5
     values_3[np.isnan(values_3)] = 0.5
@@ -294,7 +306,7 @@ def main():
                                np.nanmean(np.array(list(dict_dice_multiplied_by_std_labels['7'].values()))),
                                np.nanmean(np.array(list(dict_dice_multiplied_by_std_labels['8'].values())))], 'ro')
 
-    byLabelNumber.plot(xaxis,[np.mean(values_1), np.mean(values_2),
+    byLabelNumber.plot(xaxis,[np.mean(values_0),np.mean(values_1), np.mean(values_2),
                               np.mean(values_3),np.mean(values_4),np.mean(values_5),np.mean(values_6)
                               ,np.mean(values_7),np.mean(values_8)], 'ro')
     byLabelNumber.legend()
