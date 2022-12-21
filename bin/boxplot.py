@@ -36,6 +36,168 @@ def main():
         # ax = sns.boxplot(x="LABEL", y="HDRFDST", hue="Features", data=cdf)
         # plt.show()
 
+    ################################################################################
+
+    _0 = pd.read_csv('mia-result/results_all/1_and_all/results_summary_4.csv', sep=';')
+    _1 = pd.read_csv('mia-result/results_all/1_and_all/results_summary_5.csv', sep=';')
+    _2 = pd.read_csv('mia-result/results_all/1_and_all/results_summary_6.csv', sep=';')
+    _3 = pd.read_csv('mia-result/results_all/1_and_all/results_summary_7.csv', sep=';')
+    _4 = pd.read_csv('mia-result/results_all/1_and_all/results_summary_8.csv', sep=';')
+    _5 = pd.read_csv('mia-result/results_all/1_and_all/results_summary_9.csv', sep=';')
+    _6 = pd.read_csv('mia-result/results_all/1_and_all/results_summary_10.csv', sep=';')
+    _7 = pd.read_csv('mia-result/results_all/1_and_all/results_summary_11.csv', sep=';')
+
+    # Evaluate Dice and Housedorf
+    results_dict = {0: _0, 1: _1, 2: _2, 3: _3, 4: _4, 5: _5, 6: _6, 7: _7}
+    dict_dice_multiplied_by_std_labels = {'0': {}, '1': {}, '2': {}, '3': {}, '4': {}, '5': {}, '6': {}, '7': {}}
+    dict_dice_mean = {'0': {}, '1': {}, '2': {}, '3': {}, '4': {}, '5': {}, '6': {}, '7': {}}
+    dict_dice_std = {'0': {}, '1': {}, '2': {}, '3': {}, '4': {}, '5': {}, '6': {}, '7': {}}
+
+    for i in results_dict:
+        data = results_dict[i]
+        summary_metric = data['METRIC']
+        summary_label = data['LABEL']
+        summary_statistic = data['STATISTIC']
+        summary_value = data['VALUE']
+
+        dice_idx = np.asarray(summary_metric[:] == 'DICE')
+        mean_idx = np.asarray(summary_statistic[:] == 'MEAN')
+        std_idx = np.asarray(summary_statistic[:] == 'STD')
+
+        amygdala_idx = np.asarray(summary_label[:] == 'Amygdala')
+        mean = np.asarray(summary_value[np.logical_and(amygdala_idx, np.logical_and(dice_idx, mean_idx))])
+        std = np.asarray(summary_value[np.logical_and(amygdala_idx, np.logical_and(dice_idx, std_idx))])
+        amygdala_dice_std = std
+        if mean <= 0.01:
+            std = np.nan
+        amygdala_dice_std_times_mean = (1 - mean) * std
+        amygdala_dice_mean = mean
+
+        greyMatter_idx = np.asarray(summary_label[:] == 'GreyMatter')
+        mean = np.asarray(summary_value[np.logical_and(greyMatter_idx, np.logical_and(dice_idx, mean_idx))])
+        std = np.asarray(summary_value[np.logical_and(greyMatter_idx, np.logical_and(dice_idx, std_idx))])
+        greyMatter_dice_std = std
+        if mean <= 0.01:
+            std = np.nan
+        greyMatter_dice_std_times_mean = (1 - mean) * std
+        greyMatter_dice_mean = mean
+
+        hippocampus_idx = np.asarray(summary_label[:] == 'Hippocampus')
+        mean = np.asarray(summary_value[np.logical_and(hippocampus_idx, np.logical_and(dice_idx, mean_idx))])
+        std = np.asarray(summary_value[np.logical_and(hippocampus_idx, np.logical_and(dice_idx, std_idx))])
+        hippocampus_dice_std = std
+        if mean <= 0.01:
+            std = np.nan
+        hippocampus_dice_std_times_mean = (1 - mean) * std
+        hippocampus_dice_mean = mean
+
+        thalamus_idx = np.asarray(summary_label[:] == 'Thalamus')
+        mean = np.asarray(summary_value[np.logical_and(thalamus_idx, np.logical_and(dice_idx, mean_idx))])
+        std = np.asarray(summary_value[np.logical_and(thalamus_idx, np.logical_and(dice_idx, std_idx))])
+        thalamus_dice_std = std
+        if mean <= 0.01:
+            std = np.nan
+        thalamus_dice_std_times_mean = (1 - mean) * std
+        thalamus_dice_mean = mean
+
+        whiteMatter_idx = np.asarray(summary_label[:] == 'WhiteMatter')
+        mean = np.asarray(summary_value[np.logical_and(whiteMatter_idx, np.logical_and(dice_idx, mean_idx))])
+        std = np.asarray(summary_value[np.logical_and(whiteMatter_idx, np.logical_and(dice_idx, std_idx))])
+        whiteMatter_dice_std = std
+        if mean <= 0.01:
+            std = np.nan
+        whiteMatter_dice_std_times_mean = (1 - mean) * std
+        whiteMatter_dice_mean = mean
+
+        if i == 0:
+            dict_ = '0'
+        if i == 1:
+            dict_ = '1'
+        elif i == 2:
+            dict_ = '2'
+        elif i == 3:
+            dict_ = '3'
+        elif i == 4:
+            dict_ = '4'
+        elif i == 5:
+            dict_ = '5'
+        elif i == 6:
+            dict_ = '6'
+        elif i == 7:
+            dict_ = '7'
+
+        dict_dice_multiplied_by_std_labels[dict_] = {'Amygdala': amygdala_dice_std_times_mean.item(),
+                                                     'GreyMatter': greyMatter_dice_std_times_mean.item(),
+                                                     'Hippocampus': hippocampus_dice_std_times_mean.item(),
+                                                     'Thalamus': thalamus_dice_std_times_mean.item(),
+                                                     'WhiteMatter': whiteMatter_dice_std_times_mean.item()}
+
+        dict_dice_mean[dict_] = {'Amygdala': amygdala_dice_mean.item(),
+                                 'GreyMatter': greyMatter_dice_mean.item(),
+                                 'Hippocampus': hippocampus_dice_mean.item(),
+                                 'Thalamus': thalamus_dice_mean.item(),
+                                 'WhiteMatter': whiteMatter_dice_mean.item()}
+
+        dict_dice_std[dict_] = {'Amygdala': amygdala_dice_std.item(),
+                                'GreyMatter': greyMatter_dice_std.item(),
+                                'Hippocampus': hippocampus_dice_std.item(),
+                                'Thalamus': thalamus_dice_std.item(),
+                                'WhiteMatter': whiteMatter_dice_std.item()}
+
+    plt.plot(range(len(dict_dice_multiplied_by_std_labels['0'])),
+             list(dict_dice_multiplied_by_std_labels['0'].values()), 'o--', label='t1w_intensity_feature')
+    plt.plot(range(len(dict_dice_multiplied_by_std_labels['1'])),
+             list(dict_dice_multiplied_by_std_labels['1'].values()), 'o--', label='t2w_laplacian_feature')
+    plt.xticks(range(len(dict_dice_multiplied_by_std_labels['1'])),
+               list(dict_dice_multiplied_by_std_labels['1'].keys()))
+    plt.plot(range(len(dict_dice_multiplied_by_std_labels['2'])),
+             list(dict_dice_multiplied_by_std_labels['2'].values()), 'o--', label='t1w_laplacian_feature')
+    plt.plot(range(len(dict_dice_multiplied_by_std_labels['3'])),
+             list(dict_dice_multiplied_by_std_labels['3'].values()), 'o--', label='t2w_intensity_feature')
+    plt.plot(range(len(dict_dice_multiplied_by_std_labels['4'])),
+             list(dict_dice_multiplied_by_std_labels['4'].values()), 'o--', label='t1w_gradient_intensity_feature')
+    plt.plot(range(len(dict_dice_multiplied_by_std_labels['5'])),
+             list(dict_dice_multiplied_by_std_labels['5'].values()), 'o--', label='t2w_gradient_intensity_feature')
+    plt.plot(range(len(dict_dice_multiplied_by_std_labels['6'])),
+             list(dict_dice_multiplied_by_std_labels['6'].values()), 'o--', label='t1w_sobel_feature')
+    plt.plot(range(len(dict_dice_multiplied_by_std_labels['7'])),
+             list(dict_dice_multiplied_by_std_labels['7'].values()), 'o--', label='t2w_sobel_feature')
+    plt.ylabel(('(1- Mean Dice)* STD Dice'))
+    plt.legend(prop={'size': 7})
+    plt.title('Second added feature to coordinates feature')
+    plt.show()
+
+
+    xaxis = [    't1w_intensity_feature',
+    't2w_laplacian_feature',
+    't1w_laplacian_feature',
+    't2w_intensity_feature',
+    't1w_gradient_intensity_feature',
+    't2w_gradient_intensity_feature',
+    't1w_sobel_feature',
+    't2w_sobel_feature']
+
+
+
+    plt.plot(xaxis,[0.008959206630855754,0.010220336966972521,
+     0.010311551380648848,
+    0.010612911994000529,
+   0.009081892466313224,
+    0.010147506824645085,
+    0.008821162984216768,
+    0.009584492063558743], 'ro--', label='mean')
+    plt.legend()
+    plt.ylabel("(1- Mean Dice)* STD Dice")
+    plt.xlabel("Added feature")
+    plt.title('Second added feature to coordinates feature')
+    plt.xticks(rotation=45)
+    plt.subplots_adjust(bottom=0.50)
+
+    plt.show()
+
+
+    ####################################################################################
+
     _0 = pd.read_csv('mia-result/results_all/Summary/0.csv', sep=';')
     _1 = pd.read_csv('mia-result/results_all/Summary/1.csv', sep=';')
     _2 = pd.read_csv('mia-result/results_all/Summary/2.csv', sep=';')
@@ -146,6 +308,37 @@ def main():
                                 'Thalamus': thalamus_dice_std.item(),
                                 'WhiteMatter': whiteMatter_dice_std.item()}
 
+    plt.plot(range(len(dict_dice_multiplied_by_std_labels['0'])),
+             list(dict_dice_multiplied_by_std_labels['0'].values()), 'o--')
+    plt.plot(range(len(dict_dice_multiplied_by_std_labels['1'])),
+             list(dict_dice_multiplied_by_std_labels['1'].values()), 's--')
+    plt.xticks(range(len(dict_dice_multiplied_by_std_labels['1'])),
+                   list(dict_dice_multiplied_by_std_labels['1'].keys()))
+    plt.plot(range(len(dict_dice_multiplied_by_std_labels['2'])),
+             list(dict_dice_multiplied_by_std_labels['2'].values()), 'x--')
+    plt.plot(range(len(dict_dice_multiplied_by_std_labels['3'])),
+             list(dict_dice_multiplied_by_std_labels['3'].values()), '*--')
+    plt.plot(range(len(dict_dice_multiplied_by_std_labels['4'])),
+             list(dict_dice_multiplied_by_std_labels['4'].values()), 'v--')
+    plt.plot(range(len(dict_dice_multiplied_by_std_labels['5'])),
+             list(dict_dice_multiplied_by_std_labels['5'].values()), 's--')
+    plt.plot(range(len(dict_dice_multiplied_by_std_labels['6'])),
+             list(dict_dice_multiplied_by_std_labels['6'].values()), '*--')
+    plt.plot(range(len(dict_dice_multiplied_by_std_labels['7'])),
+             list(dict_dice_multiplied_by_std_labels['7'].values()), 'x--')
+    plt.plot(range(len(dict_dice_multiplied_by_std_labels['8'])),
+             list(dict_dice_multiplied_by_std_labels['8'].values()), 'o--')
+    plt.ylabel(('(1- Mean Dice)* STD Dice'))
+    plt.legend(['coordinates_feature',
+                '+ t1w_sobel_feature',
+                '+ t1w_intensity_feature',
+                '+ t2w_laplacian_feature',
+                '+ t1w_gradient_intensity_feature',
+                '+ t2w_gradient_intensity_feature',
+                '+ t1w_laplacian_feature',
+                '+ t2w_sobel_feature',
+                '+ t2w_intensity_feature'], prop={'size': 6})
+    # plt.show()
 
 
     fig, (ax1, ax2, ax3) = plt.subplots(3, 1)
@@ -179,55 +372,59 @@ def main():
     ax1.plot(range(len(dict_dice_multiplied_by_std_labels['8'])),
              list(dict_dice_multiplied_by_std_labels['8'].values()), 'o', label='8')
     ax1.set_ylabel(('(1- Mean Dice)* STD Dice'))
-    ax1.legend(prop={'size': 6})
-    # plt.show()
+    ax1.legend(['coordinates_feature',
+                '+ t1w_sobel_feature',
+                '+ t1w_intensity_feature',
+                '+ t2w_laplacian_feature',
+                '+ t1w_gradient_intensity_feature',
+                '+ t2w_gradient_intensity_feature',
+                '+ t1w_laplacian_feature',
+                '+ t2w_sobel_feature',
+                '+ t2w_intensity_feature'], bbox_to_anchor=(1.35, 1), prop={'size': 9})
 
     ax2.plot(range(len(dict_dice_mean['0'])),
-             list(dict_dice_mean['0'].values()), 'o', label='0')
+             list(dict_dice_mean['0'].values()), 'o')
     ax2.plot(range(len(dict_dice_mean['1'])),
-             list(dict_dice_mean['1'].values()), 'o', label='1')
+             list(dict_dice_mean['1'].values()), 'o')
     ax2.set_xticks(range(len(dict_dice_mean['1'])),
                    list(dict_dice_mean['1'].keys()))
     ax2.plot(range(len(dict_dice_mean['2'])),
-             list(dict_dice_mean['2'].values()), 'o', label='2')
+             list(dict_dice_mean['2'].values()), 'o')
     ax2.plot(range(len(dict_dice_mean['3'])),
-             list(dict_dice_mean['3'].values()), 'o', label='3')
+             list(dict_dice_mean['3'].values()), 'o')
     ax2.plot(range(len(dict_dice_mean['4'])),
-             list(dict_dice_mean['4'].values()), 'o', label='4')
+             list(dict_dice_mean['4'].values()), 'o')
     ax2.plot(range(len(dict_dice_mean['5'])),
-             list(dict_dice_mean['5'].values()), 'o', label='5')
+             list(dict_dice_mean['5'].values()), 'o')
     ax2.plot(range(len(dict_dice_mean['6'])),
-             list(dict_dice_mean['6'].values()), 'o', label='6')
+             list(dict_dice_mean['6'].values()), 'o')
     ax2.plot(range(len(dict_dice_mean['7'])),
-             list(dict_dice_mean['7'].values()), 'o', label='7')
+             list(dict_dice_mean['7'].values()), 'o')
     ax2.plot(range(len(dict_dice_mean['8'])),
-             list(dict_dice_mean['8'].values()), 'o', label='8')
+             list(dict_dice_mean['8'].values()), 'o')
     ax2.set_ylabel(('Mean Dice'))
-    ax2.legend(prop={'size': 6})
-    # plt.show()
 
     ax3.plot(range(len(dict_dice_std['0'])),
-             list(dict_dice_std['0'].values()), 'o', label='0')
+             list(dict_dice_std['0'].values()), 'o')
     ax3.plot(range(len(dict_dice_std['1'])),
-             list(dict_dice_std['1'].values()), 'o', label='1')
+             list(dict_dice_std['1'].values()), 'o')
     ax3.set_xticks(range(len(dict_dice_std['1'])),
                    list(dict_dice_std['1'].keys()))
     ax3.plot(range(len(dict_dice_std['2'])),
-             list(dict_dice_std['2'].values()), 'o', label='2')
+             list(dict_dice_std['2'].values()), 'o')
     ax3.plot(range(len(dict_dice_std['3'])),
-             list(dict_dice_std['3'].values()), 'o', label='3')
+             list(dict_dice_std['3'].values()), 'o')
     ax3.plot(range(len(dict_dice_std['4'])),
-             list(dict_dice_std['4'].values()), 'o', label='4')
+             list(dict_dice_std['4'].values()), 'o')
     ax3.plot(range(len(dict_dice_std['5'])),
-             list(dict_dice_std['5'].values()), 'o', label='5')
+             list(dict_dice_std['5'].values()), 'o')
     ax3.plot(range(len(dict_dice_std['6'])),
-             list(dict_dice_std['6'].values()), 'o', label='6')
+             list(dict_dice_std['6'].values()), 'o')
     ax3.plot(range(len(dict_dice_std['7'])),
-             list(dict_dice_std['7'].values()), 'o', label='7')
+             list(dict_dice_std['7'].values()), 'o')
     ax3.plot(range(len(dict_dice_std['8'])),
-             list(dict_dice_std['8'].values()), 'o', label='8')
+             list(dict_dice_std['8'].values()), 'o')
     ax3.set_ylabel(('STD Dice'))
-    ax3.legend(prop={'size': 6})
   #  plt.show()
 
 
@@ -316,11 +513,11 @@ def main():
 
     byLabelNumber.plot(xaxis,[np.mean(values_0),np.mean(values_1), np.mean(values_2),
                               np.mean(values_3),np.mean(values_4),np.mean(values_5),np.mean(values_6)
-                              ,np.mean(values_7),np.mean(values_8)], 'ro', label='mean')
+                              ,np.mean(values_7),np.mean(values_8)], 'ro--', label='mean')
     byLabelNumber.legend()
     byLabelNumber.set_ylabel("(1- Mean Dice)* STD Dice")
     byLabelNumber.set_xlabel("Added feature")
-    plt.xticks(rotation=90)
+    plt.xticks(rotation=45)
     plt.subplots_adjust(bottom=0.50)
     plt.show()
     if False:
